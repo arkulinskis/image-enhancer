@@ -58,12 +58,15 @@ def _key():
 
 def _call(method, path, data=None, raw=False, timeout=40):
     headers = {"Authorization": "Bearer " + _key()}
-    kw = {}
+    body = None
     if data is not None:
         headers["Content-Type"] = "application/json"
-        kw["data"] = json.dumps(data)
+        body = json.dumps(data)
     try:
-        r = anvil.http.request(API + path, method=method, headers=headers, timeout=timeout, **kw)
+        if body is None:
+            r = anvil.http.request(API + path, method=method, headers=headers, timeout=timeout)
+        else:
+            r = anvil.http.request(API + path, method=method, data=body, headers=headers, timeout=timeout)
     except anvil.http.HttpError as e:
         body = getattr(e, "content", None)
         try:
@@ -124,7 +127,8 @@ def styles():
 def verified_webhook():
     """Inside your http_endpoint: check the X-Enhancer-Signature header, return the JSON payload."""
     req = anvil.server.request
-    body = req.body.get_bytes() if hasattr(req.body, "get_bytes") else (req.body or b"")
+    raw = getattr(req, "body", None)
+    body = raw.get_bytes() if isinstance(raw, anvil.Media) else (raw or b"")
     if isinstance(body, str):
         body = body.encode("utf-8")
     secret = anvil.secrets.get_secret("image_enhancer_webhook_secret")
