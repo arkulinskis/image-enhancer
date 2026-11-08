@@ -15,7 +15,7 @@ engines.py, workflows/flux2_klein_edit.json); `clients/enhancer_client.py` is th
 
 **Where it lives:**
 - Folder `C:\Users\arkvi\Documents\CLAUDE\image-enhancer\` = the git clone of **github.com/arkulinskis/image-enhancer**, branch `master`.
-  "git" layout: the folder *is* the Anvil app. Anvil pulls master; pushing is the deploy. Live: not published yet (then update `API` in clients/enhancer_client.py and the legal/SEO url).
+  "git" layout: the folder *is* the Anvil app. Anvil pulls master; pushing is the deploy. Live: https://image-enhancer.anvil.app (if it moves: update `API` in clients/enhancer_client.py and the legal/SEO url).
 - Made from `C:\Users\arkvi\Documents\CLAUDE\APP_MAKER\template-forms` (native Anvil Forms, Nov 2026). Anvil's own agent
   skills describe the same model: `client-forms`, `data-models`, `server-code`, `client-modules`, `anvil-yaml`
   (github.com/anvil-works/anvil-agent-references; see APP_MAKER/ANVIL_NOTES.md, "Native Anvil Forms").

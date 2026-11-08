@@ -7,7 +7,7 @@ along. There is no public website: just an owner-only console and the API. Built
 native Anvil Forms; the PC side is a small Python worker that connects through **Anvil Uplink**.
 
 - **App repo:** github.com/arkulinskis/image-enhancer (branch `master`). Anvil pulls `master`.
-- **Live:** not published yet (update `API` in `clients/enhancer_client.py` once it is).
+- **Live:** https://image-enhancer.anvil.app (API: `https://image-enhancer.anvil.app/_/api/v1`, set as `API` in `clients/enhancer_client.py`).
 
 ```
 your app --POST /v1/jobs--> Image Enhancer (Anvil: queue, keys, API) --Uplink--> PC worker --> ComfyUI + FLUX.2 [klein] 4B
