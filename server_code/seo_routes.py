@@ -59,8 +59,8 @@ SEO = {
   ]
  ],
  "free": True,
- "site": "",
- "updated": "2026-11-07",
+ "site": "https://image-enhancer.anvil.app",
+ "updated": "2026-11-08",
  "icon": "icon-512.png",
  "colors": {
   "bg": "#131211",
