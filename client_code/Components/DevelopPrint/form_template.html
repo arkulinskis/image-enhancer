@@ -1,0 +1,59 @@
+---
+custom_component: true
+properties: []
+---
+<div class="ie-tray-host">
+  <div class="ie-tray" role="img" aria-label="A flat vector drawing of a house, a tree and the sun develops in a darkroom tray, then is repainted as a soft picture-book illustration">
+    <div class="ie-print">
+      <svg class="dev-flat" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <rect width="400" height="300" fill="#7fbbe6"/>
+        <circle cx="306" cy="74" r="34" fill="#f4c446"/>
+        <path d="M0 196 C 70 160, 140 170, 210 192 S 340 168, 400 186 V300 H0z" fill="#4f8d5c"/>
+        <path d="M0 238 C 90 214, 190 226, 260 244 S 360 232, 400 240 V300 H0z" fill="#3a704a"/>
+        <rect x="92" y="146" width="96" height="74" fill="#f0eade"/>
+        <path d="M82 150 L140 104 L198 150z" fill="#e2533a"/>
+        <rect x="128" y="182" width="24" height="38" fill="#7a4b33"/>
+        <rect x="104" y="160" width="18" height="16" fill="#7fbbe6"/>
+        <rect x="160" y="160" width="18" height="16" fill="#7fbbe6"/>
+        <rect x="266" y="168" width="10" height="44" fill="#7a4b33"/>
+        <circle cx="271" cy="152" r="30" fill="#5fa26a"/>
+        <path d="M140 220 C 150 250, 200 262, 230 300" stroke="#e7d9b8" stroke-width="16" fill="none"/>
+      </svg>
+      <svg class="dev-paint" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs>
+          <filter id="ie-gouache" x="-5%" y="-5%" width="110%" height="110%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="7" result="n"/>
+            <feDisplacementMap in="SourceGraphic" in2="n" scale="7"/>
+          </filter>
+          <filter id="ie-grain">
+            <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="3"/>
+            <feColorMatrix values="0 0 0 0 0.35  0 0 0 0 0.25  0 0 0 0 0.15  0 0 0 0.22 0"/>
+          </filter>
+          <radialGradient id="ie-sky" cx="70%" cy="20%" r="90%"><stop offset="0" stop-color="#fbe3b0"/><stop offset=".55" stop-color="#a9d2e6"/><stop offset="1" stop-color="#8bbfd9"/></radialGradient>
+        </defs>
+        <g filter="url(#ie-gouache)">
+          <rect width="400" height="300" fill="url(#ie-sky)"/>
+          <circle cx="306" cy="74" r="38" fill="#ffd56b" opacity=".9"/>
+          <circle cx="306" cy="74" r="28" fill="#ffc94a"/>
+          <ellipse cx="96" cy="70" rx="44" ry="14" fill="#fff8ee" opacity=".85"/>
+          <ellipse cx="128" cy="62" rx="30" ry="14" fill="#fff8ee" opacity=".85"/>
+          <path d="M0 196 C 70 160, 140 170, 210 192 S 340 168, 400 186 V300 H0z" fill="#7cb36a"/>
+          <path d="M0 238 C 90 214, 190 226, 260 244 S 360 232, 400 240 V300 H0z" fill="#5c9a58"/>
+          <rect x="92" y="146" width="96" height="74" rx="4" fill="#fbf1de" stroke="#6b4a3a" stroke-width="2.5"/>
+          <path d="M80 152 L140 102 L200 152z" fill="#e8694a" stroke="#6b4a3a" stroke-width="2.5" stroke-linejoin="round"/>
+          <rect x="128" y="182" width="24" height="38" rx="10" fill="#9a6142" stroke="#6b4a3a" stroke-width="2.5"/>
+          <rect x="104" y="160" width="18" height="16" rx="3" fill="#ffe6a3" stroke="#6b4a3a" stroke-width="2"/>
+          <rect x="160" y="160" width="18" height="16" rx="3" fill="#ffe6a3" stroke="#6b4a3a" stroke-width="2"/>
+          <rect x="266" y="168" width="10" height="44" rx="4" fill="#8a5a3c"/>
+          <circle cx="262" cy="156" r="22" fill="#6fae63"/>
+          <circle cx="282" cy="146" r="24" fill="#7dbb6b"/>
+          <circle cx="272" cy="134" r="18" fill="#8cc777"/>
+          <circle cx="58" cy="232" r="5" fill="#f6a0a8"/><circle cx="70" cy="240" r="4" fill="#fff1a8"/><circle cx="330" cy="250" r="5" fill="#f6a0a8"/>
+          <path d="M140 220 C 150 250, 200 262, 230 300" stroke="#efdcae" stroke-width="18" fill="none" stroke-linecap="round"/>
+        </g>
+        <rect width="400" height="300" filter="url(#ie-grain)"/>
+      </svg>
+      <span class="ie-print-label">meadow.png &rarr; kids_book</span>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,20 @@
+<anvil-form layout="Image_Enhancer.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="ui-wrap page-keys">
+      <div class="ui-page-head">
+        <div>
+          <anvil-component type="Label" name="title" prop:text="Apps &amp; keys" prop:role='["page-title"]'></anvil-component>
+          <p class="muted">One API key per app that sends pictures. A key is shown once; switch it off or replace it here at any time.</p>
+        </div>
+        <anvil-component type="Button" name="new_button" prop:text="New key" prop:role='["btn", "btn-primary", "ic-plus"]'></anvil-component>
+      </div>
+      <anvil-component type="RepeatingPanel" name="keys_panel" prop:item_template="Image_Enhancer.Items.KeyRow" prop:role='["ie-keys"]'></anvil-component>
+      <div class="ui-empty" anvil:name="empty">
+        <i class="ic ic-key"></i>
+        <h2>No keys yet</h2>
+        <p>Make one for each app that should be able to send pictures, then put it in that app's Secrets.</p>
+      </div>
+      <p class="muted small ie-sec">How to call the API from an app: see <a href="#setup">Connect</a>.</p>
+    </div>
+  </anvil-block>
+</anvil-form>

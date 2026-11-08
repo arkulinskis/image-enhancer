@@ -1,0 +1,22 @@
+<div class="ui ie-keyedit">
+  <anvil-component type="Label" name="heading" prop:text="New API key" prop:role='["dlg-title"]'></anvil-component>
+  <div class="ui-stack">
+    <label class="ui-field"><span>Which app is it for?</span>
+      <anvil-component type="TextBox" name="name_box" prop:placeholder="e.g. Little Hero Books"></anvil-component>
+    </label>
+    <label class="ui-field"><span>Pictures an hour, at most</span>
+      <anvil-component type="TextBox" name="limit_box" prop:type="number" prop:text="60"></anvil-component>
+    </label>
+    <label class="ui-field"><span>Note <em>(optional, only you see it)</em></span>
+      <anvil-component type="TextBox" name="note_box" prop:placeholder="What the app uses it for"></anvil-component>
+    </label>
+    <label class="ui-row" anvil:name="active_row">
+      <anvil-component type="CheckBox" name="active_box" prop:text="Key is switched on" prop:checked="true"></anvil-component>
+    </label>
+    <anvil-component type="Label" name="message" prop:role='["msg-error"]' prop:visible="false"></anvil-component>
+    <div class="ui-row end">
+      <anvil-component type="Button" name="cancel_button" prop:text="Cancel" prop:role='["btn", "btn-ghost"]'></anvil-component>
+      <anvil-component type="Button" name="save_button" prop:text="Make the key" prop:role='["btn", "btn-primary", "ic-key"]'></anvil-component>
+    </div>
+  </div>
+</div>

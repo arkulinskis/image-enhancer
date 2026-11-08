@@ -1,0 +1,18 @@
+<div class="ie-style-host">
+  <section class="ui-card ie-style">
+    <div class="ie-style-top">
+      <label class="ui-field"><span>Name</span><anvil-component type="TextBox" name="label_box"></anvil-component></label>
+      <label class="ui-field"><span>One-line description</span><anvil-component type="TextBox" name="blurb_box"></anvil-component></label>
+      <anvil-component type="CheckBox" name="enabled_box" prop:text="On"></anvil-component>
+    </div>
+    <label class="ui-field"><span>Instruction for the model</span><anvil-component type="TextArea" name="prompt_box"></anvil-component></label>
+    <anvil-component type="Label" name="message" prop:role='["msg-error"]' prop:visible="false"></anvil-component>
+    <div class="ui-row between">
+      <anvil-component type="Label" name="key_label" prop:role='["mono", "ie-meta"]'></anvil-component>
+      <div class="ui-row">
+        <anvil-component type="Button" name="reset_button" prop:text="Original words" prop:role='["btn", "btn-sm", "btn-ghost", "ic-refresh"]'></anvil-component>
+        <anvil-component type="Button" name="save_button" prop:text="Save" prop:role='["btn", "btn-sm", "btn-primary", "ic-check"]'></anvil-component>
+      </div>
+    </div>
+  </section>
+</div>

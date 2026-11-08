@@ -1,0 +1,42 @@
+<anvil-form layout="Image_Enhancer.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="ui-wrap ui-narrow">
+      <div class="pf-head">
+        <anvil-component type="Label" name="initials" prop:role='["pf-avatar"]'></anvil-component>
+        <div>
+          <anvil-component type="Label" name="name_title" prop:role='["pf-title"]'></anvil-component>
+          <anvil-component type="Label" name="email_line" prop:role='["fine-print"]'></anvil-component>
+        </div>
+      </div>
+      <div class="pf-grid">
+        <div class="ui-card ui-stack">
+          <h3>Your name</h3>
+          <label class="ui-field"><span>Shown to other people</span>
+            <anvil-component type="TextBox" name="name_box"></anvil-component>
+          </label>
+          <anvil-component type="Button" name="save_button" prop:text="Save" prop:role='["btn", "btn-primary"]'></anvil-component>
+        </div>
+        <div class="ui-card ui-stack">
+          <h3>Appearance</h3>
+          <p class="muted small">Follow your device, or pick one.</p>
+          <div class="ui-seg">
+            <button type="button" anvil:name="theme_auto" data-theme-pick="auto" anvil:on-dom:click="self.theme_click">Auto</button>
+            <button type="button" anvil:name="theme_light" data-theme-pick="light" anvil:on-dom:click="self.theme_click">Light</button>
+            <button type="button" anvil:name="theme_dark" data-theme-pick="dark" anvil:on-dom:click="self.theme_click">Dark</button>
+          </div>
+          <h3 class="pf-pw">Password</h3>
+          <p class="muted small">We'll email you a link to choose a new one.</p>
+          <anvil-component type="Button" name="reset_button" prop:text="Email me a reset link" prop:role='["btn", "ic-mail"]'></anvil-component>
+        </div>
+      </div>
+      <div class="ui-card pf-more">
+        <div class="pf-links">
+          <a href="#admin" anvil:name="admin_link"><i class="ic ic-shield"></i>Admin</a>
+          <button type="button" anvil:on-dom:click="self.feedback_click"><i class="ic ic-chat"></i>Submit feedback</button>
+          <button type="button" data-lk-open="overview"><i class="ic ic-lock"></i>Privacy &amp; Terms, and your data</button>
+          <button type="button" anvil:on-dom:click="self.sign_out_click"><i class="ic ic-logout"></i>Sign out</button>
+        </div>
+      </div>
+    </div>
+  </anvil-block>
+</anvil-form>

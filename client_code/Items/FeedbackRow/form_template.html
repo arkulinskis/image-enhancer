@@ -1,0 +1,20 @@
+<div class="ui-item ad-fb-item">
+  <div class="grow">
+    <div class="meta">
+      <anvil-component type="Label" name="kind" prop:role='["badge"]' bind:text="self.item['kind_label']"></anvil-component>
+      <anvil-component type="Label" name="who" prop:role='["strong"]' bind:text="self.item['name']"></anvil-component>
+      <anvil-component type="Link" name="email_link" bind:text="self.item['email']"></anvil-component>
+      <anvil-component type="Label" name="when"></anvil-component>
+    </div>
+    <anvil-component type="Label" name="message" prop:role='["ad-msg"]' bind:text="self.item['message']"></anvil-component>
+    <anvil-component type="Label" name="context" prop:role='["fine-print"]'></anvil-component>
+    <anvil-component type="TextArea" name="note_box" prop:placeholder="Private note (only admins see it)" prop:height="60" bind:text="self.item['note']"></anvil-component>
+    <div class="ui-row ad-fb-actions">
+      <anvil-component type="Button" name="new_button" prop:text="New" prop:role='["btn", "btn-sm"]'></anvil-component>
+      <anvil-component type="Button" name="read_button" prop:text="Read" prop:role='["btn", "btn-sm"]'></anvil-component>
+      <anvil-component type="Button" name="done_button" prop:text="Done" prop:role='["btn", "btn-sm"]'></anvil-component>
+      <span class="ui-spacer"></span>
+      <anvil-component type="Button" name="delete_button" prop:text="Delete" prop:role='["btn", "btn-sm", "btn-danger", "ic-trash"]'></anvil-component>
+    </div>
+  </div>
+</div>

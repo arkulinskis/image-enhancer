@@ -1,0 +1,24 @@
+<div class="ie-job-host">
+  <div class="ie-job" anvil:name="row">
+    <anvil-component type="Label" name="pos" prop:role='["ie-pos"]'></anvil-component>
+    <a class="ie-pair" anvil:name="pair" href="#home">
+      <span class="ie-thumb"><img anvil:name="src_img" alt="The picture that was sent" loading="lazy" width="160" height="120"></span>
+      <span class="ie-thumb" anvil:name="res_box"><img anvil:name="res_img" alt="The restyled picture" loading="lazy" width="160" height="120"></span>
+    </a>
+    <div class="ie-job-main">
+      <div class="ie-job-title">
+        <a anvil:name="title_link" href="#home"><anvil-component type="Label" name="style_label" prop:role='["t"]'></anvil-component></a>
+        <anvil-component type="Label" name="status" prop:role='["st"]'></anvil-component>
+      </div>
+      <anvil-component type="Label" name="meta" prop:role='["ie-meta"]'></anvil-component>
+      <anvil-component type="Label" name="err" prop:role='["ie-err"]' prop:visible="false"></anvil-component>
+    </div>
+    <div class="ie-job-side">
+      <anvil-component type="Label" name="eta" prop:role='["ie-eta"]'></anvil-component>
+      <div class="ie-job-btns">
+      <anvil-component type="Button" name="next_button" prop:text="Do next" prop:role='["btn", "btn-sm", "btn-ghost", "ic-skip"]' prop:visible="false"></anvil-component>
+      <anvil-component type="Button" name="cancel_button" prop:text="Cancel" prop:role='["btn", "btn-sm", "btn-ghost", "ic-x"]' prop:visible="false"></anvil-component>
+      </div>
+    </div>
+  </div>
+</div>

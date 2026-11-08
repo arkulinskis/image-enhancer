@@ -1,0 +1,119 @@
+<anvil-form layout="Image_Enhancer.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="ui-wrap page-setup">
+      <div class="ui-page-head">
+        <div>
+          <anvil-component type="Label" name="title" prop:text="Connect" prop:role='["page-title"]'></anvil-component>
+          <p class="muted">Two sides to set up: your PC (it does the painting) and your apps (they send pictures and get them back).</p>
+        </div>
+      </div>
+
+      <section class="ui-card ie-pc" aria-label="The PC">
+        <span class="ie-lamp" anvil:name="lamp"></span>
+        <div>
+          <anvil-component type="Label" name="pc_state" prop:role='["ie-pc-state"]'></anvil-component>
+          <anvil-component type="Label" name="pc_detail" prop:role='["ie-pc-detail"]'></anvil-component>
+        </div>
+        <div class="ie-pc-actions">
+          <anvil-component type="Button" name="ping_button" prop:text="Check the PC" prop:role='["btn", "ic-cpu"]'></anvil-component>
+        </div>
+      </section>
+
+      <section class="ie-sec">
+        <div class="ie-sec-head"><h2>Your PC</h2><p>About 20 minutes, most of it downloading.</p></div>
+        <p class="muted">The PC runs <b>ComfyUI</b> with <b>FLUX.2 [klein] 4B</b>, an open image-editing model (Apache 2.0, fine for commercial apps) that repaints a picture from a plain instruction in 4 steps. It needs an NVIDIA graphics card with 8 GB or more, about 15 GB of free disk, Python 3.10 to 3.12 and Git. A small worker script links ComfyUI to this app through Anvil Uplink: the app hands it one picture at a time and it hands back the result.</p>
+        <div class="ie-steps">
+          <div class="ie-step">
+            <h3>Switch on Uplink in Anvil</h3>
+            <p>In the Anvil editor for this app: the <b>+</b> (Add feature) button &rarr; <b>Uplink</b> &rarr; <b>Enable the Server Uplink</b>. Copy the key it shows (it starts with <code>server_</code>). It is a password for the whole app: keep it on the PC only.</p>
+          </div>
+          <div class="ie-step">
+            <h3>Put the worker on the PC</h3>
+            <p>Download <a href="https://github.com/arkulinskis/image-enhancer/archive/refs/heads/master.zip" target="_blank" rel="noopener">the app's files as a zip</a>, unzip them anywhere (for example <code>C:\ImageEnhancer</code>) and open the <code>worker</code> folder. Or with Git:</p>
+            <pre class="ie-pre"><code>git clone https://github.com/arkulinskis/image-enhancer.git C:\ImageEnhancer</code></pre>
+          </div>
+          <div class="ie-step">
+            <h3>Install ComfyUI and the model</h3>
+            <p>In the <code>worker</code> folder, right-click <code>setup_comfyui.ps1</code> &rarr; <b>Run with PowerShell</b>. It installs ComfyUI next to the worker (its own Python environment with the right PyTorch for NVIDIA cards) and downloads the three model files, about 11.6 GB. Run it again any time: it skips what is already there and updates ComfyUI.</p>
+            <pre class="ie-pre"><code>powershell -ExecutionPolicy Bypass -File setup_comfyui.ps1</code></pre>
+          </div>
+          <div class="ie-step">
+            <h3>Start the worker</h3>
+            <p>Double-click <code>start_worker.bat</code>. The first time it asks for the Uplink key and saves it in <code>config.json</code> (never uploaded anywhere). It starts ComfyUI if it isn't running, connects, and the lamp above turns green. Keep the window open; close it to stop. To start it with Windows, put a shortcut to <code>start_worker.bat</code> in <code>shell:startup</code>.</p>
+          </div>
+          <div class="ie-step">
+            <h3>Try it</h3>
+            <p>Send a picture from the <a href="#try">Test bench</a>. The first one takes longer (the model loads into the graphics card); after that a 1-megapixel picture takes about 20 to 60 seconds on an 8 GB laptop card.</p>
+          </div>
+        </div>
+        <p class="muted small">No GPU yet? <code>start_worker.bat --backend classic</code> runs a simple built-in filter instead of the model, so you can test the whole round trip.</p>
+      </section>
+
+      <section class="ie-sec">
+        <div class="ie-sec-head"><h2>Your apps</h2><p>Every call needs a key from <a href="#keys">Apps &amp; keys</a>.</p></div>
+        <p class="muted">The API lives at this address. Send the key in the <code>Authorization</code> header, never in the address.</p>
+        <div class="ie-secret-row">
+          <anvil-component type="Label" name="api_label" prop:role='["ie-code"]'></anvil-component>
+          <anvil-component type="Button" name="copy_api" prop:text="Copy" prop:role='["btn", "btn-sm", "ic-copy"]'></anvil-component>
+        </div>
+        <dl class="ie-api">
+          <dt><code>POST /jobs</code></dt><dd>Send a picture: JSON with <code>image</code> (base64) or <code>image_url</code>, the picture's bytes, or a multipart form. Answers 202 with the job: its <code>id</code>, <code>position</code> and <code>eta_seconds</code>.</dd>
+          <dt><code>GET /jobs/&lt;id&gt;</code></dt><dd>Where it is: <code>status</code> (queued, working, done, failed, cancelled), position, estimated finish (<code>eta_at</code>), and <code>result_url</code> once done. Add <code>?wait=20</code> to hold the answer until it finishes, up to 20 s.</dd>
+          <dt><code>GET /jobs/&lt;id&gt;/result</code></dt><dd>The finished picture itself.</dd>
+          <dt><code>GET /queue</code></dt><dd>How long the queue is, whether the PC is online, and when a picture sent now would be ready.</dd>
+          <dt><code>GET /styles</code></dt><dd>The styles to choose from.</dd>
+          <dt><code>GET /jobs</code></dt><dd>Your app's recent jobs (<code>?status=open</code>, <code>done</code> ...).</dd>
+          <dt><code>POST /jobs/&lt;id&gt;/cancel</code></dt><dd>Cancel a picture that hasn't started.</dd>
+        </dl>
+        <p class="muted">Options you can send with a picture: <code>style</code> (required), <code>prompt</code> (extra words), <code>fidelity</code> (loose, balanced, strict), <code>megapixels</code> (0.25 to 2, default 1), <code>size</code> (<code>model</code>, or <code>source</code> to get your picture's size back), <code>format</code> (png, jpeg, webp), <code>seed</code>, <code>ref</code> (your own id, returned with the job) and <code>callback_url</code> (https; called when it's done).</p>
+
+        <h3 class="ie-step-h">From another Anvil app (Python, server code)</h3>
+        <p class="muted">Put the key in that app's Secrets as <code>image_enhancer_key</code>, and copy <a href="https://github.com/arkulinskis/image-enhancer/blob/master/clients/enhancer_client.py" target="_blank" rel="noopener"><code>clients/enhancer_client.py</code></a> into its server code. Then:</p>
+        <pre class="ie-pre" anvil:name="pre_py"><code>from . import enhancer_client as enhancer
+
+job = enhancer.submit(drawing_media, "kids_book", ref=str(order_id))   # {"id": "job_...", "eta_seconds": 95, ...}
+...
+job = enhancer.status(job["id"])            # or enhancer.wait(job["id"], timeout=25) in a background task
+if job["status"] == "done":
+    row["styled"] = enhancer.result(job["id"])   # an Anvil Media, ready for a media column</code></pre>
+
+        <h3 class="ie-step-h">From anything else (curl)</h3>
+        <pre class="ie-pre" anvil:name="pre_curl"><code>curl -X POST "API_BASE/jobs?style=scifi&amp;fidelity=strict" \
+  -H "Authorization: Bearer $IE_KEY" -H "Content-Type: image/png" \
+  --data-binary @drawing.png
+
+curl -H "Authorization: Bearer $IE_KEY" "API_BASE/jobs/job_xxxxxxxx?wait=20"</code></pre>
+
+        <h3 class="ie-step-h">JavaScript (Node 18+, server side)</h3>
+        <pre class="ie-pre" anvil:name="pre_js"><code>const res = await fetch("API_BASE/jobs", {
+  method: "POST",
+  headers: { Authorization: `Bearer ${process.env.IE_KEY}`, "Content-Type": "application/json" },
+  body: JSON.stringify({ image: fs.readFileSync("drawing.png").toString("base64"), style: "anime", ref: "card-42" }),
+});
+const { job } = await res.json();   // job.id, job.position, job.eta_seconds</code></pre>
+
+        <h3 class="ie-step-h">When a picture is done (webhooks)</h3>
+        <p class="muted">Send <code>callback_url</code> and the service POSTs <code>{"event": "job.done", "job": {...}}</code> (or <code>job.failed</code>) there. Check it really came from here with the key's webhook secret:</p>
+        <pre class="ie-pre" anvil:name="pre_hook"><code>import hashlib, hmac
+
+def from_image_enhancer(raw_body: bytes, signature_header: str, secret: str) -&gt; bool:
+    good = "sha256=" + hmac.new(secret.encode(), raw_body, hashlib.sha256).hexdigest()
+    return hmac.compare_digest(good, signature_header or "")   # header: X-Enhancer-Signature</code></pre>
+        <p class="muted small">Keys are for servers only: never put one in a web page or a phone app, where anyone could read it.</p>
+      </section>
+
+      <section class="ie-sec">
+        <div class="ie-sec-head"><h2>Settings</h2></div>
+        <div class="ie-cfg">
+          <label class="ui-field"><span>Ask an absent PC again every (minutes)</span><anvil-component type="TextBox" name="retry_box" prop:type="number"></anvil-component></label>
+          <label class="ui-field"><span>Tries per picture</span><anvil-component type="TextBox" name="attempts_box" prop:type="number"></anvil-component></label>
+          <label class="ui-field"><span>Keep finished jobs (days)</span><anvil-component type="TextBox" name="keep_box" prop:type="number"></anvil-component></label>
+        </div>
+        <anvil-component type="Label" name="cfg_message" prop:role='["msg-error"]' prop:visible="false"></anvil-component>
+        <div class="ui-row" style="margin-top:12px">
+          <anvil-component type="Button" name="save_cfg" prop:text="Save settings" prop:role='["btn", "btn-primary", "ic-check"]'></anvil-component>
+        </div>
+      </section>
+    </div>
+  </anvil-block>
+</anvil-form>

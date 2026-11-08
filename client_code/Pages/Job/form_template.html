@@ -1,0 +1,53 @@
+<anvil-form layout="Image_Enhancer.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="ui-wrap page-job">
+      <div class="ui-page-head">
+        <div>
+          <a href="#home" class="small"><i class="ic ic-back"></i> Queue</a>
+          <anvil-component type="Label" name="title" prop:text="Job" prop:role='["page-title"]'></anvil-component>
+          <anvil-component type="Label" name="sub" prop:role='["ie-sub", "mono"]'></anvil-component>
+        </div>
+        <anvil-component type="Label" name="status" prop:role='["st"]'></anvil-component>
+      </div>
+
+      <div class="ui-empty" anvil:name="missing">
+        <i class="ic ic-image"></i>
+        <h2>That job isn't here</h2>
+        <anvil-component type="Label" name="missing_text"></anvil-component>
+      </div>
+
+      <div class="ie-job-page" anvil:name="body">
+        <div>
+          <anvil-component type="Image_Enhancer.Components.BeforeAfter" name="compare"></anvil-component>
+          <anvil-component type="Label" name="state_note" prop:role='["msg-note"]' prop:visible="false"></anvil-component>
+          <anvil-component type="Label" name="error_note" prop:role='["msg-error"]' prop:visible="false"></anvil-component>
+          <div class="ie-actions">
+            <a class="ui-btn primary" anvil:name="download_link" href="#" download target="_blank" rel="noopener"><i class="ic ic-download"></i>Download the result</a>
+            <anvil-component type="Button" name="next_button" prop:text="Do next" prop:role='["btn", "ic-skip"]'></anvil-component>
+            <anvil-component type="Button" name="retry_button" prop:text="Try again" prop:role='["btn", "ic-refresh"]'></anvil-component>
+            <anvil-component type="Button" name="cancel_button" prop:text="Cancel" prop:role='["btn", "ic-x"]'></anvil-component>
+            <anvil-component type="Button" name="delete_button" prop:text="Delete" prop:role='["btn", "btn-danger", "ic-trash"]'></anvil-component>
+          </div>
+        </div>
+        <aside class="ui-card">
+          <h2 class="ie-step-h">Details</h2>
+          <dl class="ie-facts">
+            <dt>Style</dt><dd><anvil-component type="Label" name="f_style"></anvil-component></dd>
+            <dt>From</dt><dd><anvil-component type="Label" name="f_app"></anvil-component></dd>
+            <dt>Their ref</dt><dd><anvil-component type="Label" name="f_ref" prop:role='["mono"]'></anvil-component></dd>
+            <dt>Sent</dt><dd><anvil-component type="Label" name="f_sent"></anvil-component></dd>
+            <dt>Finished</dt><dd><anvil-component type="Label" name="f_done"></anvil-component></dd>
+            <dt>Size</dt><dd><anvil-component type="Label" name="f_size" prop:role='["mono"]'></anvil-component></dd>
+            <dt>Options</dt><dd><anvil-component type="Label" name="f_opts" prop:role='["mono"]'></anvil-component></dd>
+            <dt>Tries</dt><dd><anvil-component type="Label" name="f_tries" prop:role='["mono"]'></anvil-component></dd>
+            <dt>PC</dt><dd><anvil-component type="Label" name="f_pc"></anvil-component></dd>
+            <dt>Webhook</dt><dd><anvil-component type="Label" name="f_hook"></anvil-component></dd>
+          </dl>
+          <h3 class="ie-step-h">What the model was told</h3>
+          <anvil-component type="Label" name="instr" prop:role='["ie-instr"]'></anvil-component>
+        </aside>
+      </div>
+      <anvil-component type="Timer" name="timer" prop:interval="0"></anvil-component>
+    </div>
+  </anvil-block>
+</anvil-form>

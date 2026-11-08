@@ -1,0 +1,16 @@
+{
+  "uplink_key": "server_PASTE-YOUR-SERVER-UPLINK-KEY",
+  "anvil_url": "",
+  "backend": "comfyui",
+  "comfy_url": "http://127.0.0.1:8188",
+  "comfy_dir": "ComfyUI",
+  "start_comfy": true,
+  "comfy_args": [],
+  "hide_comfy_window": true,
+  "workflow": "workflows/flux2_klein_edit.json",
+  "steps": 4,
+  "max_megapixels": 2.0,
+  "job_timeout": 900,
+  "heartbeat_seconds": 120,
+  "tidy_files": true
+}

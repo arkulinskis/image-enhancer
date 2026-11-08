@@ -1,0 +1,24 @@
+---
+custom_component: true
+properties:
+  - name: before_url
+    type: string
+  - name: after_url
+    type: string
+  - name: before_label
+    type: string
+    default_value: Sent
+  - name: after_label
+    type: string
+    default_value: Restyled
+---
+<div class="ie-ba-host">
+  <div class="ie-ba ie-frame no-after" anvil:name="box">
+    <img anvil:name="before_img" alt="The picture that was sent" width="1024" height="768">
+    <div class="ie-ba-after"><img anvil:name="after_img" alt="The restyled picture" width="1024" height="768"></div>
+    <input type="range" min="0" max="100" value="50" aria-label="Compare: drag left to see more of the restyled picture" anvil:name="slider" anvil:on-dom:input="self.slider_input">
+    <span class="ie-ba-line" aria-hidden="true"></span>
+    <span class="ie-ba-tag l" anvil:name="tag_before">Sent</span>
+    <span class="ie-ba-tag r" anvil:name="tag_after">Restyled</span>
+  </div>
+</div>

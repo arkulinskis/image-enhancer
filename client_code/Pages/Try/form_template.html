@@ -1,0 +1,72 @@
+<anvil-form layout="Image_Enhancer.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="ui-wrap page-try">
+      <div class="ui-page-head">
+        <div>
+          <anvil-component type="Label" name="title" prop:text="Test bench" prop:role='["page-title"]'></anvil-component>
+          <p class="muted">Send a picture through the real queue, exactly as an app would, and watch the PC paint it.</p>
+        </div>
+      </div>
+
+      <div class="ie-bench">
+        <div>
+          <h2 class="ie-step-h">1. The picture</h2>
+          <div class="ie-drop" anvil:name="drop">
+            <div>
+              <i class="ic ic-upload"></i>
+              <p><b>PNG, JPEG, WebP or SVG</b><br><span class="muted small">Up to 15 MB. SVG is turned into a PNG here in your browser.</span></p>
+              <anvil-component type="FileLoader" name="loader" prop:text="Choose a picture" prop:role='["btn", "btn-primary"]' prop:file_types="image/png,image/jpeg,image/webp,image/svg+xml,.svg"></anvil-component>
+            </div>
+          </div>
+          <div class="ie-preview ie-frame" anvil:name="preview_box">
+            <img anvil:name="preview_img" alt="The picture you chose" width="1024" height="768">
+          </div>
+          <div class="ui-row" anvil:name="file_row">
+            <anvil-component type="Label" name="file_label" prop:role='["fine-print", "mono"]'></anvil-component>
+            <anvil-component type="Button" name="clear_button" prop:text="Choose another" prop:role='["btn", "btn-sm", "btn-ghost", "ic-x"]'></anvil-component>
+          </div>
+        </div>
+
+        <div>
+          <h2 class="ie-step-h">2. The style</h2>
+          <anvil-component type="RepeatingPanel" name="styles_panel" prop:item_template="Image_Enhancer.Items.StyleChip" prop:role='["ie-styles"]'></anvil-component>
+          <anvil-component type="Label" name="style_note" prop:role='["fine-print"]'></anvil-component>
+
+          <h2 class="ie-step-h">3. How closely to follow the picture</h2>
+          <div class="ui-seg" role="group" aria-label="Fidelity">
+            <anvil-component type="Button" name="fid_loose" prop:text="Loose" prop:role='["seg"]'></anvil-component>
+            <anvil-component type="Button" name="fid_balanced" prop:text="Balanced" prop:role='["seg"]'></anvil-component>
+            <anvil-component type="Button" name="fid_strict" prop:text="Strict" prop:role='["seg"]'></anvil-component>
+          </div>
+
+          <h2 class="ie-step-h">4. Extra words for the model <span class="muted small">(optional)</span></h2>
+          <anvil-component type="TextBox" name="prompt_box" prop:placeholder="e.g. add falling snow, make the fox orange"></anvil-component>
+
+          <div class="ie-opts" style="margin-top:16px">
+            <label class="ui-field"><span>Detail</span><anvil-component type="DropDown" name="mp_drop"></anvil-component></label>
+            <label class="ui-field"><span>Result size</span><anvil-component type="DropDown" name="size_drop"></anvil-component></label>
+            <label class="ui-field"><span>File type</span><anvil-component type="DropDown" name="fmt_drop"></anvil-component></label>
+          </div>
+          <label class="ui-field" style="margin-top:12px"><span>Seed <em>(optional: the same seed repeats a result)</em></span>
+            <anvil-component type="TextBox" name="seed_box" prop:placeholder="random" prop:type="number"></anvil-component>
+          </label>
+          <anvil-component type="Label" name="message" prop:role='["msg-error"]' prop:visible="false"></anvil-component>
+          <div class="ui-row" style="margin-top:18px">
+            <anvil-component type="Button" name="send_button" prop:text="Send to the queue" prop:role='["btn", "btn-primary", "btn-lg", "ic-wand"]'></anvil-component>
+            <a class="ui-btn ghost" href="#styles"><i class="ic ic-brush"></i>Edit the styles</a>
+          </div>
+        </div>
+      </div>
+
+      <section class="ie-sec ie-result" anvil:name="result_box">
+        <div class="ie-sec-head">
+          <h2>The result</h2>
+          <a anvil:name="job_link" href="#home" class="small">Open the job</a>
+        </div>
+        <anvil-component type="Label" name="result_state" prop:role='["msg-note"]'></anvil-component>
+        <anvil-component type="Image_Enhancer.Components.BeforeAfter" name="compare"></anvil-component>
+      </section>
+      <anvil-component type="Timer" name="timer" prop:interval="0"></anvil-component>
+    </div>
+  </anvil-block>
+</anvil-form>

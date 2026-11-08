@@ -1,0 +1,44 @@
+<anvil-form layout="Image_Enhancer.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="au-wrap">
+      <div class="ui-card au-card">
+        <anvil-component type="Label" name="heading" prop:role='["au-title"]' prop:text="Welcome back"></anvil-component>
+        <anvil-component type="Label" name="sub" prop:role='["au-sub"]' prop:text="Sign in to continue to Image Enhancer."></anvil-component>
+
+        <div class="ui-seg" role="group" aria-label="Sign in or create an account" anvil:name="mode_tabs">
+          <button type="button" anvil:name="tab_login" data-mode="login" anvil:on-dom:click="self.mode_click">Sign in</button>
+          <button type="button" anvil:name="tab_signup" data-mode="signup" anvil:on-dom:click="self.mode_click">Create account</button>
+        </div>
+
+        <div class="ui-stack">
+          <label class="ui-field" anvil:name="name_field"><span>Your name</span>
+            <anvil-component type="TextBox" name="name_box" prop:placeholder="e.g. Sam Rivera"></anvil-component>
+          </label>
+          <label class="ui-field"><span>Email</span>
+            <anvil-component type="TextBox" name="email_box" prop:type="email" prop:placeholder="you@example.com"></anvil-component>
+          </label>
+          <label class="ui-field" anvil:name="password_field"><span anvil:name="password_label">Password</span>
+            <span class="au-pw">
+              <anvil-component type="TextBox" name="password_box" prop:hide_text="true"></anvil-component>
+              <anvil-component type="Button" name="show_button" prop:text="Show" prop:role='["au-show"]'></anvil-component>
+            </span>
+          </label>
+          <div anvil:name="consent_box" anvil:dom-node="consent"></div>
+          <anvil-component type="Label" name="message" prop:visible="false"></anvil-component>
+          <anvil-component type="Button" name="submit_button" prop:text="Sign in" prop:role='["btn", "btn-primary", "btn-block"]'></anvil-component>
+        </div>
+
+        <div anvil:name="google_part">
+          <div class="au-or">or</div>
+          <anvil-component type="Button" name="google_button" prop:text="Continue with Google" prop:icon="_/theme/google-g.svg" prop:role='["btn", "btn-block", "au-google"]'></anvil-component>
+        </div>
+
+        <div class="au-links">
+          <a href="#auth/reset" anvil:name="forgot_link" data-mode="reset" anvil:on-dom:click="self.mode_click">Forgot your password?</a>
+          <a href="#auth" anvil:name="back_link" data-mode="login" anvil:on-dom:click="self.mode_click"><i class="ic ic-back"></i> Back to sign in</a>
+          <a href="#landing">About Image Enhancer</a>
+        </div>
+      </div>
+    </div>
+  </anvil-block>
+</anvil-form>

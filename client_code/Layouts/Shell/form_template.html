@@ -1,0 +1,71 @@
+---
+layout_metadata:
+  title: App frame
+  description: Header with the menu and account button, the page in the middle, the footer and the phone tab bar
+---
+<div class="ui ui-shell">
+  <header class="ui-header">
+    <div class="ui-header-in">
+      <a class="ui-brand" anvil:name="brand" href="#landing" aria-label="Image Enhancer home">
+        <img src="_/theme/icon.svg" alt="" width="32" height="32"><span>Image Enhancer</span>
+      </a>
+      <nav class="ui-nav" aria-label="Main">
+        <anvil-component type="RepeatingPanel" name="nav_panel" prop:item_template="Image_Enhancer.Items.NavLink" prop:role='["contents"]'></anvil-component>
+      </nav>
+      <div class="ui-header-right">
+        <div class="ui-row" anvil:name="guest_actions">
+          <a class="ui-btn primary" href="#auth">Sign in</a>
+        </div>
+        <div anvil:name="member_actions">
+          <anvil-component type="Button" name="avatar_button" prop:role='["avatar"]' prop:tooltip="Your account"></anvil-component>
+          <div class="ui-menu" anvil:name="menu">
+            <div class="ui-menu-head">
+              <anvil-component type="Label" name="menu_name" prop:role='["menu-name"]'></anvil-component>
+              <anvil-component type="Label" name="menu_email" prop:role='["menu-email"]'></anvil-component>
+            </div>
+            <a href="#profile"><i class="ic ic-user"></i>Your profile</a>
+            <a href="#admin" anvil:name="admin_link"><i class="ic ic-shield"></i>Admin</a>
+            <div class="ui-menu-block"><span class="small muted">Appearance</span>
+              <div class="ui-seg" role="group" aria-label="Appearance">
+                <button type="button" data-theme-set="auto" anvil:name="theme_auto" anvil:on-dom:click="self.theme_click">Auto</button>
+                <button type="button" data-theme-set="light" anvil:name="theme_light" anvil:on-dom:click="self.theme_click">Light</button>
+                <button type="button" data-theme-set="dark" anvil:name="theme_dark" anvil:on-dom:click="self.theme_click">Dark</button>
+              </div>
+            </div>
+            <button type="button" anvil:on-dom:click="self.feedback_click"><i class="ic ic-chat"></i>Submit feedback</button>
+            <button type="button" data-lk-open="overview"><i class="ic ic-lock"></i>Privacy &amp; Terms</button>
+            <button type="button" anvil:on-dom:click="self.sign_out_click"><i class="ic ic-logout"></i>Sign out</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="ui-main">
+    <anvil-slot name="content"></anvil-slot>
+  </main>
+
+  <footer class="ui-footer">
+    <div class="ui-footer-in">
+      <div class="ui-footer-brand">
+        <a class="ui-brand" href="#landing"><img src="_/theme/icon.svg" alt="" width="32" height="32"><span>Image Enhancer</span></a>
+        <p class="muted small">A private restyling service for Arkvital apps.</p>
+        <p class="small muted ui-footer-org">Contact developer: <a href="https://arkvital.com" target="_blank" rel="noopener">arkvital.com</a><br>Parent company: <a href="https://addanapp.com" target="_blank" rel="noopener">addanapp.com</a></p>
+      </div>
+      <div class="ui-footer-links">
+        <a href="#landing">About</a>
+        <a href="#setup">API guide</a>
+        <a href="https://prepsto.com/#f/t792bny" target="_blank" rel="noopener" data-prepsto-open>Submit feedback</a>
+        <button type="button" data-lk-open="overview">Privacy &amp; Terms</button>
+      </div>
+      <div class="ui-footer-legal">
+        <anvil-component type="Label" name="copyright_label" prop:text="© Image Enhancer" prop:role='["fine-print"]'></anvil-component>
+      </div>
+    </div>
+  </footer>
+
+  <nav class="ui-tabbar" aria-label="Main" anvil:name="tabbar">
+    <anvil-component type="RepeatingPanel" name="tab_panel" prop:item_template="Image_Enhancer.Items.NavLink" prop:role='["contents"]'></anvil-component>
+    <a href="#profile" anvil:name="tab_profile"><i class="ic ic-user"></i><span>You</span></a>
+  </nav>
+</div>

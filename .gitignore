@@ -1,0 +1,10 @@
+*.pyc
+*.pyo
+__pycache__
+.anvil-data
+/.anvil/
+# the PC worker's local files: the Uplink key, ComfyUI + models, Python environments, logs
+worker/config.json
+worker/ComfyUI/
+worker/.venv/
+worker/*.log

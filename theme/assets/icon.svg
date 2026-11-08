@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Image Enhancer: a print half flat (as sent), half repainted in safelight red and amber -->
+  <defs>
+    <clipPath id="ie-l"><rect x="9" y="11" width="23" height="42"/></clipPath>
+    <clipPath id="ie-r"><rect x="32" y="11" width="23" height="42"/></clipPath>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="#1c1a18"/>
+  <rect x="9" y="11" width="46" height="42" rx="5" fill="#f2efe9"/>
+  <g clip-path="url(#ie-l)">
+    <circle cx="42" cy="24" r="6" fill="#b5aea4"/>
+    <path d="M9 53 L25 30 L35 43 L42 35 L55 53 Z" fill="#57514a"/>
+  </g>
+  <g clip-path="url(#ie-r)">
+    <rect x="9" y="11" width="46" height="42" fill="#fbe3c4"/>
+    <circle cx="42" cy="24" r="6" fill="#e9a23b"/>
+    <path d="M9 53 L25 30 L35 43 L42 35 L55 53 Z" fill="#e0533a"/>
+  </g>
+  <rect x="30.5" y="8" width="3" height="48" rx="1.5" fill="#ec6a50"/>
+</svg>

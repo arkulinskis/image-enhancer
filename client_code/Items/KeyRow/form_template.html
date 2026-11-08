@@ -1,0 +1,21 @@
+<div class="ie-key-host">
+  <div class="ie-key">
+    <div>
+      <div class="ui-row">
+        <anvil-component type="Label" name="name" prop:role='["strong"]' bind:text="self.item['name']"></anvil-component>
+        <anvil-component type="Label" name="state_badge" prop:role='["st"]'></anvil-component>
+      </div>
+      <anvil-component type="Label" name="note" prop:role='["ie-meta"]' bind:text="self.item['note']" bind:visible="bool(self.item['note'])"></anvil-component>
+      <anvil-component type="Label" name="prefix" prop:role='["mono", "ie-meta"]'></anvil-component>
+    </div>
+    <div>
+      <anvil-component type="Label" name="usage" prop:role='["ie-meta"]'></anvil-component>
+      <anvil-component type="Label" name="used" prop:role='["ie-meta"]'></anvil-component>
+    </div>
+    <div class="ie-key-side">
+      <anvil-component type="Button" name="edit_button" prop:text="Edit" prop:role='["btn", "btn-sm", "btn-ghost", "ic-edit"]'></anvil-component>
+      <anvil-component type="Button" name="rotate_button" prop:text="Replace key" prop:role='["btn", "btn-sm", "btn-ghost", "ic-refresh"]'></anvil-component>
+      <anvil-component type="Button" name="delete_button" prop:text="Delete" prop:role='["btn", "btn-sm", "btn-ghost", "btn-danger", "ic-trash"]'></anvil-component>
+    </div>
+  </div>
+</div>

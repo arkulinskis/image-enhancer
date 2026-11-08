@@ -1,0 +1,23 @@
+<anvil-form layout="Image_Enhancer.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="ui-wrap page-styles">
+      <div class="ui-page-head">
+        <div>
+          <anvil-component type="Label" name="title" prop:text="Styles" prop:role='["page-title"]'></anvil-component>
+          <p class="muted">The ten looks a picture can be repainted in. Each style is an instruction for the model; change the words here and the next picture uses them. Apps ask for a style by its key.</p>
+        </div>
+      </div>
+      <anvil-component type="RepeatingPanel" name="styles_panel" prop:item_template="Image_Enhancer.Items.StyleRow" prop:role='["ie-stylelist"]'></anvil-component>
+
+      <section class="ie-sec">
+        <div class="ie-sec-head"><h2>Fidelity: what gets added after the style</h2></div>
+        <p class="muted">Apps choose how closely the result follows their picture. One of these sentences is added to every instruction, then the app's own extra words.</p>
+        <dl class="ie-facts">
+          <dt><code>loose</code></dt><dd><anvil-component type="Label" name="fid_loose"></anvil-component></dd>
+          <dt><code>balanced</code></dt><dd><anvil-component type="Label" name="fid_balanced"></anvil-component></dd>
+          <dt><code>strict</code></dt><dd><anvil-component type="Label" name="fid_strict"></anvil-component></dd>
+        </dl>
+      </section>
+    </div>
+  </anvil-block>
+</anvil-form>

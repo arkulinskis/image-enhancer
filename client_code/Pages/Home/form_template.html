@@ -1,0 +1,79 @@
+<anvil-form layout="Image_Enhancer.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="ui-wrap page-home">
+      <div class="ui-card ie-private" anvil:name="private_box">
+        <i class="ic ic-lock"></i>
+        <h1>This console is private</h1>
+        <p class="muted">Image Enhancer is a service for its owner's own apps. Your account is signed in, but there's nothing to manage here with it.</p>
+        <p class="muted small">Building one of the owner's apps? Ask them for an API key; the <a href="#landing">About page</a> explains how the service works.</p>
+      </div>
+
+      <div anvil:name="console_box">
+        <div class="ui-page-head">
+          <div>
+            <anvil-component type="Label" name="title" prop:text="Queue" prop:role='["page-title"]'></anvil-component>
+            <anvil-component type="Label" name="sub" prop:role='["ie-sub"]'></anvil-component>
+          </div>
+          <div class="ui-row">
+            <anvil-component type="Button" name="pause_button" prop:text="Pause the queue" prop:role='["btn", "ic-pause"]'></anvil-component>
+            <anvil-component type="Button" name="kick_button" prop:text="Ask the PC now" prop:role='["btn", "btn-primary", "ic-refresh"]'></anvil-component>
+          </div>
+        </div>
+
+        <section class="ui-card ie-pc" aria-label="The PC">
+          <span class="ie-lamp" anvil:name="lamp"></span>
+          <div>
+            <anvil-component type="Label" name="pc_state" prop:role='["ie-pc-state"]'></anvil-component>
+            <anvil-component type="Label" name="pc_detail" prop:role='["ie-pc-detail"]'></anvil-component>
+          </div>
+          <div class="ie-pc-actions">
+            <anvil-component type="Button" name="ping_button" prop:text="Check the PC" prop:role='["btn", "btn-ghost", "ic-cpu"]'></anvil-component>
+            <a class="ui-btn ghost" href="#setup" anvil:name="connect_link"><i class="ic ic-plug"></i>Connect a PC</a>
+          </div>
+        </section>
+        <div class="ie-strip">
+          <span><anvil-component type="Label" name="n_waiting" prop:text="0" prop:role='["ie-n"]'></anvil-component>waiting</span>
+          <span><anvil-component type="Label" name="n_working" prop:text="0" prop:role='["ie-n"]'></anvil-component>on the PC</span>
+          <span><anvil-component type="Label" name="n_done" prop:text="0" prop:role='["ie-n"]'></anvil-component>done</span>
+          <span><anvil-component type="Label" name="n_failed" prop:text="0" prop:role='["ie-n"]'></anvil-component>failed</span>
+          <span><anvil-component type="Label" name="n_avg" prop:text="-" prop:role='["ie-n"]'></anvil-component>per picture</span>
+        </div>
+
+        <div class="ie-two">
+          <div>
+            <section class="ie-sec">
+              <div class="ie-sec-head"><h2>Waiting for the PC</h2><anvil-component type="Label" name="eta_note" prop:role='["fine-print"]'></anvil-component></div>
+              <anvil-component type="RepeatingPanel" name="waiting_panel" prop:item_template="Image_Enhancer.Items.JobRow" prop:role='["ie-jobs"]'></anvil-component>
+              <div class="ui-empty" anvil:name="no_waiting">
+                <i class="ic ic-layers"></i>
+                <h3>Nothing waiting</h3>
+                <p>Pictures your apps send land here, oldest first. Try one from the <a href="#try">Test bench</a>.</p>
+              </div>
+              <anvil-component type="Label" name="more_label" prop:role='["fine-print"]' prop:visible="false"></anvil-component>
+            </section>
+
+            <section class="ie-sec">
+              <div class="ie-sec-head">
+                <h2>Recently finished</h2>
+                <anvil-component type="Button" name="history_button" prop:text="Show the last 60" prop:role='["btn", "btn-sm", "btn-ghost"]'></anvil-component>
+              </div>
+              <anvil-component type="RepeatingPanel" name="recent_panel" prop:item_template="Image_Enhancer.Items.JobRow" prop:role='["ie-jobs"]'></anvil-component>
+              <div class="ui-empty" anvil:name="no_recent">
+                <i class="ic ic-image"></i>
+                <h3>No finished pictures yet</h3>
+                <p>Once the PC paints the first one, the before and after show up here.</p>
+              </div>
+            </section>
+          </div>
+
+          <aside class="ie-sec" aria-label="Activity">
+            <div class="ie-sec-head"><h2>Activity</h2></div>
+            <anvil-component type="RepeatingPanel" name="events_panel" prop:item_template="Image_Enhancer.Items.EventRow" prop:role='["ie-events"]'></anvil-component>
+            <anvil-component type="Label" name="no_events" prop:text="Nothing has happened yet." prop:role='["fine-print"]' prop:visible="false"></anvil-component>
+          </aside>
+        </div>
+      </div>
+      <anvil-component type="Timer" name="timer" prop:interval="0"></anvil-component>
+    </div>
+  </anvil-block>
+</anvil-form>

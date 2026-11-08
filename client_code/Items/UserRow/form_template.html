@@ -1,0 +1,7 @@
+<div class="ad-table ad-user-row">
+  <anvil-component type="Label" name="name" prop:role='["strong"]' bind:text="self.item['name']"></anvil-component>
+  <anvil-component type="Label" name="email" prop:role='["ad-email"]' bind:text="self.item['email']"></anvil-component>
+  <anvil-component type="Label" name="joined" prop:role='["fine-print"]'></anvil-component>
+  <anvil-component type="CheckBox" name="admin_box" prop:text="Admin" bind:checked="self.item['is_admin']"></anvil-component>
+  <anvil-component type="CheckBox" name="active_box" prop:text="Active" bind:checked="self.item['enabled']"></anvil-component>
+</div>

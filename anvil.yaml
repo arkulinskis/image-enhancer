@@ -1,0 +1,513 @@
+allow_embedding: false
+db_schema:
+  app_settings:
+    client: none
+    columns:
+    - admin_ui:
+        order: 0
+        width: 200
+      name: key
+      type: string
+    - admin_ui:
+        order: 1
+        width: 200
+      name: value
+      type: simpleObject
+    indexes: []
+    server: full
+    title: App settings
+  clients:
+    client: none
+    columns:
+    - admin_ui:
+        order: 0
+        width: 200
+      name: name
+      type: string
+    - admin_ui:
+        order: 1
+        width: 200
+      name: key_prefix
+      type: string
+    - admin_ui:
+        order: 2
+        width: 200
+      name: key_hash
+      type: string
+    - admin_ui:
+        order: 3
+        width: 200
+      name: webhook_secret
+      type: string
+    - admin_ui:
+        order: 4
+        width: 200
+      name: active
+      type: bool
+    - admin_ui:
+        order: 5
+        width: 200
+      name: hourly_limit
+      type: number
+    - admin_ui:
+        order: 6
+        width: 200
+      name: note
+      type: string
+    - admin_ui:
+        order: 7
+        width: 200
+      name: created
+      type: datetime
+    - admin_ui:
+        order: 8
+        width: 200
+      name: last_used
+      type: datetime
+    - admin_ui:
+        order: 9
+        width: 200
+      name: jobs_total
+      type: number
+    - admin_ui:
+        order: 10
+        width: 200
+      name: is_demo
+      type: bool
+    indexes: []
+    server: full
+    title: API clients
+  events:
+    client: none
+    columns:
+    - admin_ui:
+        order: 0
+        width: 200
+      name: time
+      type: datetime
+    - admin_ui:
+        order: 1
+        width: 200
+      name: kind
+      type: string
+    - admin_ui:
+        order: 2
+        width: 200
+      name: text
+      type: string
+    - admin_ui:
+        order: 3
+        width: 200
+      name: job_id
+      type: string
+    - admin_ui:
+        order: 4
+        width: 200
+      name: is_demo
+      type: bool
+    indexes: []
+    server: full
+    title: Activity
+  feedback:
+    client: none
+    columns:
+    - admin_ui:
+        order: 0
+        width: 200
+      name: user
+      target: users
+      type: link_single
+    - admin_ui:
+        order: 1
+        width: 200
+      name: name
+      type: string
+    - admin_ui:
+        order: 2
+        width: 200
+      name: email
+      type: string
+    - admin_ui:
+        order: 3
+        width: 200
+      name: kind
+      type: string
+    - admin_ui:
+        order: 4
+        width: 200
+      name: message
+      type: string
+    - admin_ui:
+        order: 5
+        width: 200
+      name: context
+      type: simpleObject
+    - admin_ui:
+        order: 6
+        width: 200
+      name: status
+      type: string
+    - admin_ui:
+        order: 7
+        width: 200
+      name: note
+      type: string
+    - admin_ui:
+        order: 8
+        width: 200
+      name: created
+      type: datetime
+    indexes: []
+    server: full
+    title: Feedback
+  jobs:
+    client: none
+    columns:
+    - admin_ui:
+        order: 0
+        width: 200
+      name: job_id
+      type: string
+    - admin_ui:
+        order: 1
+        width: 200
+      name: client
+      target: clients
+      type: link_single
+    - admin_ui:
+        order: 2
+        width: 200
+      name: origin
+      type: string
+    - admin_ui:
+        order: 3
+        width: 200
+      name: style
+      type: string
+    - admin_ui:
+        order: 4
+        width: 200
+      name: prompt
+      type: string
+    - admin_ui:
+        order: 5
+        width: 200
+      name: options
+      type: simpleObject
+    - admin_ui:
+        order: 6
+        width: 200
+      name: source
+      type: media
+    - admin_ui:
+        order: 7
+        width: 200
+      name: source_key
+      type: string
+    - admin_ui:
+        order: 8
+        width: 200
+      name: source_name
+      type: string
+    - admin_ui:
+        order: 9
+        width: 200
+      name: width
+      type: number
+    - admin_ui:
+        order: 10
+        width: 200
+      name: height
+      type: number
+    - admin_ui:
+        order: 11
+        width: 200
+      name: result
+      type: media
+    - admin_ui:
+        order: 12
+        width: 200
+      name: result_key
+      type: string
+    - admin_ui:
+        order: 13
+        width: 200
+      name: status
+      type: string
+    - admin_ui:
+        order: 14
+        width: 200
+      name: priority
+      type: number
+    - admin_ui:
+        order: 15
+        width: 200
+      name: created
+      type: datetime
+    - admin_ui:
+        order: 16
+        width: 200
+      name: started
+      type: datetime
+    - admin_ui:
+        order: 17
+        width: 200
+      name: finished
+      type: datetime
+    - admin_ui:
+        order: 18
+        width: 200
+      name: attempts
+      type: number
+    - admin_ui:
+        order: 19
+        width: 200
+      name: next_try
+      type: datetime
+    - admin_ui:
+        order: 20
+        width: 200
+      name: error
+      type: string
+    - admin_ui:
+        order: 21
+        width: 200
+      name: seconds
+      type: number
+    - admin_ui:
+        order: 22
+        width: 200
+      name: worker_info
+      type: simpleObject
+    - admin_ui:
+        order: 23
+        width: 200
+      name: callback_url
+      type: string
+    - admin_ui:
+        order: 24
+        width: 200
+      name: callback_status
+      type: string
+    - admin_ui:
+        order: 25
+        width: 200
+      name: client_ref
+      type: string
+    - admin_ui:
+        order: 26
+        width: 200
+      name: is_demo
+      type: bool
+    indexes: []
+    server: full
+    title: Jobs
+  styles:
+    client: none
+    columns:
+    - admin_ui:
+        order: 0
+        width: 200
+      name: key
+      type: string
+    - admin_ui:
+        order: 1
+        width: 200
+      name: label
+      type: string
+    - admin_ui:
+        order: 2
+        width: 200
+      name: prompt
+      type: string
+    - admin_ui:
+        order: 3
+        width: 200
+      name: blurb
+      type: string
+    - admin_ui:
+        order: 4
+        width: 200
+      name: sort
+      type: number
+    - admin_ui:
+        order: 5
+        width: 200
+      name: enabled
+      type: bool
+    - admin_ui:
+        order: 6
+        width: 200
+      name: updated
+      type: datetime
+    indexes: []
+    server: full
+    title: Styles
+  users:
+    client: none
+    columns:
+    - admin_ui:
+        order: 0
+        width: 200
+      client_hidden: false
+      name: email
+      type: string
+    - admin_ui:
+        order: 1
+        width: 200
+      client_hidden: true
+      name: enabled
+      type: bool
+    - admin_ui:
+        order: 2
+        width: 200
+      client_hidden: true
+      name: last_login
+      type: datetime
+    - admin_ui:
+        order: 3
+        width: 200
+      client_hidden: true
+      name: password_hash
+      type: string
+    - admin_ui:
+        order: 4
+        width: 200
+      client_hidden: true
+      name: n_password_failures
+      type: number
+    - admin_ui:
+        order: 5
+        width: 200
+      client_hidden: true
+      name: confirmed_email
+      type: bool
+    - admin_ui:
+        order: 6
+        width: 200
+      client_hidden: true
+      name: signed_up
+      type: datetime
+    - admin_ui:
+        order: 7
+        width: 200
+      client_hidden: false
+      name: display_name
+      type: string
+    - admin_ui:
+        order: 8
+        width: 200
+      client_hidden: false
+      name: is_admin
+      type: bool
+    - admin_ui:
+        order: 9
+        width: 200
+      client_hidden: false
+      name: is_demo
+      type: bool
+    - admin_ui:
+        order: 10
+        width: 200
+      client_hidden: false
+      name: last_seen
+      type: datetime
+    - admin_ui:
+        order: 11
+        width: 200
+      client_hidden: false
+      name: legal_version
+      type: string
+    - admin_ui:
+        order: 12
+        width: 200
+      client_hidden: false
+      name: legal_accepted_at
+      type: datetime
+    - admin_ui:
+        order: 13
+        width: 200
+      client_hidden: false
+      name: legal_source
+      type: string
+    - admin_ui:
+        order: 14
+        width: 200
+      client_hidden: true
+      name: remembered_logins
+      type: simpleObject
+    indexes: []
+    server: full
+    title: Users
+metadata:
+  description: 'Private image restyling API: your apps send a picture, your own PC repaints it in one of ten styles.'
+  logo_img: asset:icon-512.png
+  title: Image Enhancer
+name: Image Enhancer
+native_deps:
+  head_html: |
+    <script src="_/theme/legal-kit.js?v=8292c1a747"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#131211">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link id="ui-favicon" rel="icon" type="image/svg+xml" href="_/theme/icon.svg?v=ca290ba50b">
+    <link rel="apple-touch-icon" href="_/theme/icon-180.png?v=9d5636c1af">
+    <script>
+    /* Keep our tab icon: Anvil adds its own <link rel="icon">, so drop any other icon link. */
+    (function () {
+      function keep() {
+        var ours = document.getElementById('ui-favicon');
+        if (!ours) return;
+        document.querySelectorAll('link[rel~="icon"]').forEach(function (l) { if (l !== ours) l.remove(); });
+      }
+      keep();
+      document.addEventListener('DOMContentLoaded', keep);
+      window.addEventListener('load', keep);
+    })();
+    </script>
+
+    <!-- Prepsto feedback panel: every "Submit feedback" link and button opens it (it is the only feedback channel). No floating button, no cookies, nothing loads until it is opened. Codes: APP_MAKER/prepsto-links.json -->
+    <script src="https://prepsto.com/_/theme/widget.js" data-prepsto="t792bny" data-button="false" data-label="Submit feedback" async></script>
+    <link rel="stylesheet" href="_/theme/icons.css?v=ca13b50058">
+    <link rel="stylesheet" href="_/theme/app.css?v=dcba749e93">
+    <script src="_/theme/ie-kit.js?v=57dc128f5b"></script>
+    <script src="_/theme/app-kit.js?v=9cfb4706a1"></script>
+package_name: Image_Enhancer
+runtime_options:
+  client_version: '3'
+  server_spec:
+    base: python314
+  version: 3
+scheduled_tasks:
+- job_id: IEQTICK1
+  task_name: enhancer_tick
+  time_spec:
+    at: {}
+    every: minute
+    n: 15
+services:
+- client_config:
+    enable_v2: true
+  server_config: {}
+  source: /runtime/services/tables.yml
+- client_config:
+    allow_remember_me: true
+    allow_signup: true
+    confirm_email: false
+    enable_automatically: true
+    remember_me_days: 30
+    require_secure_passwords: true
+    use_email: true
+    use_google: true
+  server_config:
+    user_table: users
+  source: /runtime/services/anvil/users.yml
+- client_config: {}
+  server_config: {}
+  source: /runtime/services/google.yml
+startup:
+  module: startup
+  type: module

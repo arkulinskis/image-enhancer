@@ -1,0 +1,22 @@
+<div class="ui ie-keymade">
+  <anvil-component type="Label" name="heading" prop:role='["dlg-title"]'></anvil-component>
+  <anvil-component type="Label" name="once" prop:text="Copy these now: this is the only time the key is shown. If it's lost, replace it." prop:role='["msg-note"]'></anvil-component>
+  <div class="ie-secret">
+    <b>API key</b>
+    <div class="ie-secret-row">
+      <anvil-component type="Label" name="key_text" prop:role='["ie-code"]'></anvil-component>
+      <anvil-component type="Button" name="copy_key" prop:text="Copy" prop:role='["btn", "btn-sm", "ic-copy"]'></anvil-component>
+    </div>
+  </div>
+  <div class="ie-secret">
+    <b>Webhook secret <span class="muted small">(checks that "job finished" calls really come from here)</span></b>
+    <div class="ie-secret-row">
+      <anvil-component type="Label" name="secret_text" prop:role='["ie-code"]'></anvil-component>
+      <anvil-component type="Button" name="copy_secret" prop:text="Copy" prop:role='["btn", "btn-sm", "ic-copy"]'></anvil-component>
+    </div>
+  </div>
+  <p class="muted small">In an Anvil app: App &rarr; Secrets &rarr; add <code>image_enhancer_key</code> (and <code>image_enhancer_webhook_secret</code>), then copy <code>clients/enhancer_client.py</code> from the repo into its server code. The <a href="#setup">Connect</a> page has code for other languages.</p>
+  <div class="ui-row end">
+    <anvil-component type="Button" name="done_button" prop:text="I've copied them" prop:role='["btn", "btn-primary", "ic-check"]'></anvil-component>
+  </div>
+</div>
