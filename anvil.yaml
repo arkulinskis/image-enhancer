@@ -440,13 +440,26 @@ db_schema:
     server: full
     title: Users
 metadata:
-  description: 'Private image restyling API: your apps send a picture, your own PC repaints it in one of ten styles.'
-  logo_img: asset:icon-512.png
-  title: Image Enhancer
+  description: "A private service for Arkvital's apps: send a picture with a style and get it back repainted by an open image model on the owner's own PC."
+  logo_img: "asset:icon-512.png"
+  title: "Image Enhancer: private picture-restyling API"
 name: Image Enhancer
 native_deps:
   head_html: |
     <script src="_/theme/legal-kit.js?v=8292c1a747"></script>
+    <!-- seo:start (APP_MAKER/seo: edit seo/apps/imageenhancer.json and run seo.py, not here) -->
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="keywords" content="image restyling api, vector art to illustration, picture book style, comfyui api queue, flux.2 klein, anvil uplink, image style transfer service, self-hosted image model">
+    <meta name="author" content="Arkvital">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Image Enhancer">
+    <meta property="og:title" content="Image Enhancer: private picture-restyling API">
+    <meta property="og:description" content="A private service for Arkvital&#x27;s apps: send a picture with a style and get it back repainted by an open image model on the owner&#x27;s own PC.">
+    <meta property="og:locale" content="en_CA">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Image Enhancer: private picture-restyling API">
+    <meta name="twitter:description" content="A private service for Arkvital&#x27;s apps: send a picture with a style and get it back repainted by an open image model on the owner&#x27;s own PC.">
+    <!-- seo:end -->
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#131211">
     <meta name="apple-mobile-web-app-capable" content="yes">
