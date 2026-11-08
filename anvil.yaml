@@ -446,7 +446,7 @@ metadata:
 name: Image Enhancer
 native_deps:
   head_html: |
-    <script src="_/theme/legal-kit.js?v=8292c1a747"></script>
+    <script src="_/theme/legal-kit.js?v=eab411b057"></script>
     <!-- seo:start (APP_MAKER/seo: edit seo/apps/imageenhancer.json and run seo.py, not here) -->
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="keywords" content="image restyling api, vector art to illustration, picture book style, comfyui api queue, flux.2 klein, anvil uplink, image style transfer service, self-hosted image model">
