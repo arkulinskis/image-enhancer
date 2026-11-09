@@ -2,6 +2,7 @@
 rem Image Enhancer worker: keeps this PC connected to the app and paints the pictures it sends.
 rem   start_worker.bat                 ComfyUI + FLUX.2 [klein] 4B (run setup_comfyui.ps1 once first)
 rem   start_worker.bat --backend classic   built-in test filters, no GPU needed
+rem   start_worker.bat --new-key           paste the Uplink key again (if Anvil says it's wrong)
 rem Close this window (or press Ctrl+C) to stop.
 title Image Enhancer worker
 cd /d "%~dp0"

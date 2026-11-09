@@ -3,6 +3,7 @@
     start_worker.bat                      (Windows: runs this with the worker's own Python environment)
     python enhancer_worker.py [--backend comfyui|classic] [--key server_...] [--url ws://localhost:3100/_/uplink]
                               [--check]   just check ComfyUI and the model files, then exit
+                              [--new-key] forget the saved Uplink key and ask for it again
 
 What it does:
   - connects to the app with the SERVER Uplink key (saved in config.json the first time you paste it);
@@ -76,15 +77,51 @@ def save_config(cfg):
         json.dump(cfg, f, indent=2)
 
 
+def clean_key(key):
+    """The key as Anvil wants it: no spaces, quotes or invisible characters, and only once. The prompt hides what you
+    type, so pasting twice is easy (2026-11-09: a key saved twice over was refused as "Incorrect uplink key")."""
+    key = "".join(ch for ch in str(key or "") if ch.isprintable() and not ch.isspace()).strip("\"'")
+    for n in (2, 3, 4):
+        if len(key) % n == 0 and key[:len(key) // n] * n == key:
+            return key[:len(key) // n]
+    return key
+
+
+def masked(key):
+    return "%s...%s (%d characters)" % (key[:10], key[-3:], len(key)) if len(key) > 16 else "(%d characters)" % len(key)
+
+
 def ask_key(cfg):
     print("\nPaste the app's SERVER Uplink key (Anvil editor: + Add feature -> Uplink -> Enable the Server Uplink).")
     print("It starts with server_ and is saved only in worker/config.json on this PC.")
-    key = getpass.getpass("Uplink key (hidden as you type): ").strip()
-    if not key:
-        sys.exit("No key given.")
-    cfg["uplink_key"] = key
-    save_config(cfg)
-    return cfg
+    print("The key stays hidden while you paste it: paste it ONCE, then press Enter.")
+    for _ in range(3):
+        key = clean_key(getpass.getpass("Uplink key (hidden as you type): "))
+        if not key:
+            sys.exit("No key given.")
+        if key.startswith("client_"):
+            print("That's the CLIENT key. The worker needs the SERVER key (the other one in Anvil's Uplink window).")
+            continue
+        if not key.startswith("server_"):
+            print("That doesn't look like an Uplink key (it should start with server_). Please paste it again.")
+            continue
+        cfg["uplink_key"] = key
+        save_config(cfg)
+        print("Saved: %s" % masked(key))
+        return cfg
+    sys.exit("No usable key given.")
+
+
+def wrong_key(e):
+    return "uplink key" in str(e).lower()
+
+
+def stop_wrong_key():
+    """Anvil refused the key: say so plainly and stop (the uplink library would otherwise retry forever)."""
+    log("Anvil says this Uplink key is wrong. Copy the SERVER key again (Anvil editor: Uplink window), then run")
+    log("   start_worker.bat --new-key")
+    log("and paste it ONCE. (A new key is needed if someone pressed Reset in Anvil's Uplink window.)")
+    os._exit(3)
 
 
 def worker_info():
@@ -99,6 +136,8 @@ def hello(server):
         r = server.call("enhancer_worker_hello", worker_info())
         return r
     except Exception as e:
+        if wrong_key(e):
+            stop_wrong_key()
         log("Couldn't say hello to the app (%s). Will try again." % type(e).__name__)
         return None
 
@@ -111,11 +150,18 @@ def main():
     ap.add_argument("--comfy-url")
     ap.add_argument("--check", action="store_true", help="check ComfyUI + model files, then exit")
     ap.add_argument("--once", action="store_true", help="(tests) exit after the first job")
+    ap.add_argument("--new-key", action="store_true", help="forget the saved Uplink key and ask for it again")
     args = ap.parse_args()
 
     cfg = load_config()
+    if cfg.get("uplink_key") and clean_key(cfg["uplink_key"]) != cfg["uplink_key"]:
+        cfg["uplink_key"] = clean_key(cfg["uplink_key"])
+        save_config(cfg)
+        log("Fixed the saved Uplink key (it had been pasted more than once, or had spaces): %s" % masked(cfg["uplink_key"]))
+    if args.new_key:
+        cfg["uplink_key"] = ""
     if args.key:
-        cfg["uplink_key"] = args.key.strip()
+        cfg["uplink_key"] = clean_key(args.key)
         save_config(cfg)
     if args.backend:
         cfg["backend"] = args.backend
@@ -195,6 +241,8 @@ def main():
         else:
             anvil.server.connect(cfg["uplink_key"])
     except Exception as e:
+        if wrong_key(e):
+            stop_wrong_key()
         log("Couldn't connect: %s" % e)
         log("Check the Uplink key (it must be the SERVER key) and the internet connection, then start again.")
         sys.exit(2)
