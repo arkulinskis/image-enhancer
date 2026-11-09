@@ -145,18 +145,25 @@ def _ld(o):
         app["serviceType"] = s.get("service_type", s.get("tagline", s["title"]))
         app["provider"] = {"@id": "https://arkvital.com/#org"}
         app["areaServed"] = "Worldwide"
-        app["availableChannel"] = {"@type": "ServiceChannel", "serviceUrl": o + "/", "name": "Web browser"}
+        # availableLanguage belongs on the channel (schema.org has no Service.availableLanguage)
+        app["availableChannel"] = {"@type": "ServiceChannel", "serviceUrl": o + "/", "name": "Web browser",
+                                   "availableLanguage": s.get("lang", "en")}
         del app["inLanguage"], app["publisher"], app["keywords"]
-        app["availableLanguage"] = s.get("lang", "en")
+    if app["@type"] == "ProfessionalService":
+        # an Organization: knowsLanguage, not inLanguage (a CreativeWork field)
+        app["knowsLanguage"] = app.pop("inLanguage")
+        del app["publisher"]
     if app["@type"] in ("WebApplication", "VideoGame"):
         app["applicationCategory"] = s.get("category", "WebApplication")
         app["operatingSystem"] = "Any (web browser)"
+    if app["@type"] == "WebApplication":
         app["browserRequirements"] = "Requires JavaScript and a modern web browser"
+    if app["@type"] in ("WebApplication", "VideoGame"):
         if s.get("features"):
             app["featureList"] = s["features"]
     if s.get("free"):
         app["offers"] = {"@type": "Offer", "price": "0", "priceCurrency": "CAD"}
-    if s.get("audience"):
+    if s.get("audience") and app["@type"] != "ProfessionalService":
         app["audience"] = {"@type": "Audience", "audienceType": s["audience"]}
     page = {"@type": "AboutPage", "@id": o + "/about#page", "url": o + "/about", "name": "About " + s["name"],
             "about": {"@id": o + "/#app"}, "isPartOf": {"@id": o + "/#site"}}
