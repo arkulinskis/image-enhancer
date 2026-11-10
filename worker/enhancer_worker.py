@@ -119,7 +119,7 @@ def wrong_key(e):
 def stop_wrong_key():
     """Anvil refused the key: say so plainly and stop (the uplink library would otherwise retry forever)."""
     log("Anvil says this Uplink key is wrong. Copy the SERVER key again (Anvil editor: Uplink window), then run")
-    log("   start_worker.bat --new-key")
+    log("   %s --new-key" % ("start_worker.bat" if os.name == "nt" else "./start_worker.sh"))
     log("and paste it ONCE. (A new key is needed if someone pressed Reset in Anvil's Uplink window.)")
     os._exit(3)
 
@@ -268,6 +268,11 @@ def main():
             log("Stopping the ComfyUI this worker started.")
             proc.terminate()
     atexit.register(bye)
+    if os.name != "nt":
+        # Linux/Mac: closing the terminal sends SIGHUP, which skips atexit; end the main loop instead so bye() runs.
+        import signal
+        for sig in (signal.SIGHUP, signal.SIGTERM):
+            signal.signal(sig, lambda *_: done.set())
 
     try:
         while not done.is_set():

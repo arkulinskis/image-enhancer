@@ -37,6 +37,15 @@ shortcut to `start_worker.bat` there.
 
 `start_worker.bat --backend classic` uses simple Pillow filters instead of the model (no GPU), to test the round trip.
 
+## Ubuntu (22.04 or newer)
+
+Copy the `worker` folder over (leave out `.venv` and `ComfyUI/venv`; `ComfyUI/models` can come along to skip the
+12.5 GB download; `config.json` brings the Uplink key with it). Then right-click `install_ubuntu.sh` -> Properties ->
+turn on **Executable as Program**, and right-click -> **Run as a Program** (or `bash install_ubuntu.sh` in a terminal).
+It installs what's missing (asks for your password once), the same ComfyUI + model as on Windows, adds an
+**Image Enhancer worker** icon to the app menu and desktop, and can start the worker at login. Needs the NVIDIA driver
+first ("Software & Updates" -> "Additional Drivers"). Start it later with the icon or `./start_worker.sh`.
+
 ## Settings (`config.json`, see `config.example.json`)
 
 | Setting | Default | What it does |

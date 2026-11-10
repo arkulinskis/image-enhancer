@@ -1,3 +1,6 @@
 # Windows scripts keep CRLF line endings exactly as committed (cmd needs them for goto labels)
 *.bat -text
 *.ps1 -text
+
+# Linux scripts must keep LF line endings
+*.sh text eol=lf
