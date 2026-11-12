@@ -25,6 +25,8 @@ if [ ! -x ".venv/bin/python" ]; then
     read -rp "Press Enter to close" _
     exit 1
 fi
+# Graphics-card settings written by install_ubuntu.sh (AMD cards); ComfyUI inherits them from the worker
+[ -f gpu.env ] && . ./gpu.env
 ".venv/bin/python" enhancer_worker.py "$@"
 echo
 echo "The worker stopped."

@@ -37,14 +37,23 @@ shortcut to `start_worker.bat` there.
 
 `start_worker.bat --backend classic` uses simple Pillow filters instead of the model (no GPU), to test the round trip.
 
-## Ubuntu (22.04 or newer)
+## Ubuntu (22.04 to 26.04, Python 3.10 to 3.14), NVIDIA or AMD
 
 Copy the `worker` folder over (leave out `.venv` and `ComfyUI/venv`; `ComfyUI/models` can come along to skip the
 12.5 GB download; `config.json` brings the Uplink key with it). Then right-click `install_ubuntu.sh` -> Properties ->
 turn on **Executable as Program**, and right-click -> **Run as a Program** (or `bash install_ubuntu.sh` in a terminal).
 It installs what's missing (asks for your password once), the same ComfyUI + model as on Windows, adds an
-**Image Enhancer worker** icon to the app menu and desktop, and can start the worker at login. Needs the NVIDIA driver
-first ("Software & Updates" -> "Additional Drivers"). Start it later with the icon or `./start_worker.sh`.
+**Image Enhancer worker** icon to the app menu and desktop, and can start the worker at login. Start it later with the
+icon or `./start_worker.sh`.
+
+- **NVIDIA:** install the driver first ("Software & Updates" -> "Additional Drivers"). Gets PyTorch for CUDA 12.8.
+- **AMD Radeon (e.g. RX 6700 XT):** no driver to install, Ubuntu's own is enough. Gets PyTorch for ROCm 7.2
+  (6.4 as a fallback), adds you to the `render`/`video` groups (the first time: restart, then run the installer once
+  more), and writes `gpu.env` with the card's settings, which `start_worker.sh` loads. RX 6700/6600 cards (gfx1031/1032)
+  aren't on AMD's list, so `gpu.env` sets `HSA_OVERRIDE_GFX_VERSION=10.3.0` to run them as an RX 6800. If pictures
+  come out black, add `"comfy_args": ["--fp32-vae"]` to `config.json`.
+- Intel graphics built into the processor are ignored. Moving between an NVIDIA and an AMD PC: just run the installer;
+  it swaps PyTorch, and rebuilds the Python environments if the Python version differs.
 
 ## Settings (`config.json`, see `config.example.json`)
 

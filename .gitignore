@@ -8,3 +8,4 @@ worker/config.json
 worker/ComfyUI/
 worker/.venv/
 worker/*.log
+worker/gpu.env
