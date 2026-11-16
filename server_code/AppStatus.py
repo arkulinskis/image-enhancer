@@ -1,9 +1,11 @@
 """App status report for admins: users, database rows, errors, background tasks, health (APP_MAKER standard, 2026-11-16).
 
     In the app (signed-in admin):  anvil.server.call("admin_status_report")
-    Web address (admins only):     https://<app address>/_/api/admin/status
-        - open it in a browser tab where you are signed in to the app as an admin, or
-        - from a script: HTTP Basic auth with an admin's email + password (Google-only accounts: use the browser).
+    Web address:                   https://<app address>/_/api/admin/status
+        - Addanapp's App health page: requests signed with Addanapp's private key (App Secret there); every app
+          checks them with the public key below (public on purpose: it can only check, never sign), or
+        - a browser where you are signed in to the app as an admin, or
+        - a script: HTTP Basic auth with an admin's email + password.
         Anyone else gets 401/403 and no data. ?errors=50 shows more recent errors (max 200).
 
 Errors come from the `error_log` table: the browser reports every uncaught error (session_guard.py ->
@@ -15,6 +17,7 @@ Same file in every app: APP_MAKER/template-forms/server_code/AppStatus.py (tools
 import collections
 import datetime as dt
 import hashlib
+import hmac
 import json
 import random
 import sys
@@ -28,7 +31,20 @@ import anvil.tables as tables
 
 from . import AdminAccess
 
-VERSION = "2026-11-16"
+VERSION = "2026-11-16b"
+# Addanapp's status-signing key (public half). Sign: APP_MAKER/addanapp-forms server_code/AppHealth.py.
+SIGNING_KEY_N = int(
+    "9f562d9db915999c686ba722c5b9513304ebe79a98968863f64d0dd590ce6c19"
+    "6fe926fb74147f9e4cffc2a7471b411417f9dc9bf71798a5e73a9435e19b543e"
+    "e1bd21d051ccc649fc67206b5a4665c8214d6191a8faaf7d0fda0044bcd76c4c"
+    "2495e717711bbb25aca47f6c0a58ca1b8cf98838fecfc788b5857a608e30e76a"
+    "b4b51051e2c9a6fb10d467b3ee3095d9de722415800ea55bb792dcd049eba4bf"
+    "cde63d8460489e00fe4ffe2d03c944501c25e3e4c135f3ff23f3a98cdd91f7ce"
+    "bd27e25ab894336fd93b8888a69c277ef574f634012b27cb75c39719014d51f4"
+    "5808c04888318c1f26ab79f5d26d5af01e0d83e24b8b8bf58d7a42d6b2e5367f", 16)
+SIGNING_KEY_E = 65537
+SIGNATURE_MAX_AGE = 300     # seconds; the signed host stops a signature for one app working on another
+_SHA256_PREFIX = bytes.fromhex("3031300d060960864801650304020105000420")
 KEEP_ERRORS = 1000          # error_log keeps the newest rows only (data table rows count towards the plan)
 PER_SESSION_LIMIT = 30      # browser error reports per session per hour
 
@@ -52,10 +68,61 @@ def _aware(v):
 
 
 def _admin(user):
+    """Ticked is_admin, or listed in the admin_emails App Secret (then it gets ticked: the two ways to be admin)."""
+    if user is None:
+        return False
     try:
-        return bool(user is not None and user["is_admin"])
+        if user["is_admin"]:
+            return True
     except Exception:
         return False
+    if AdminAccess.may_promote(user):
+        try:
+            user["is_admin"] = True
+        except Exception:
+            pass
+        return True
+    return False
+
+
+def _host(value):
+    v = str(value or "").strip().lower()
+    for prefix in ("https://", "http://"):
+        if v.startswith(prefix):
+            v = v[len(prefix):]
+    return v.split("/")[0]
+
+
+def signature_message(host, ts, nonce):
+    return "addanapp-status-v1|%s|%s|%s" % (_host(host), ts, nonce)
+
+
+def signed_by_addanapp(headers, n=None):
+    """RSA PKCS#1 v1.5 / SHA-256 check of X-Addanapp-Ts/-Nonce/-Sig against this app's host. Pure Python."""
+    n = n or SIGNING_KEY_N
+    h = {str(k).lower(): str(v) for k, v in (headers or {}).items()}
+    ts, nonce, sig = h.get("x-addanapp-ts", ""), h.get("x-addanapp-nonce", ""), h.get("x-addanapp-sig", "")
+    try:
+        if abs(time.time() - int(ts)) > SIGNATURE_MAX_AGE or not 8 <= len(nonce) <= 64:
+            return False
+        s = int(sig, 16)
+    except (TypeError, ValueError):
+        return False
+    if not 0 < s < n:
+        return False
+    size = (n.bit_length() + 7) // 8
+    hosts = {_host(h.get("host"))}
+    try:
+        hosts.add(_host(anvil.server.get_app_origin()))
+    except Exception:
+        pass
+    got = pow(s, SIGNING_KEY_E, n).to_bytes(size, "big")
+    for host in hosts - {""}:
+        digest = hashlib.sha256(signature_message(host, ts, nonce).encode()).digest()
+        want = b"\x00\x01" + b"\xff" * (size - 3 - len(_SHA256_PREFIX) - len(digest)) + b"\x00" + _SHA256_PREFIX + digest
+        if hmac.compare_digest(got, want):
+            return True
+    return False
 
 
 def _require_admin():
@@ -86,7 +153,13 @@ def _columns(table):
     try:
         return {c["name"] for c in table.list_columns()}
     except Exception:
-        return set()
+        pass
+    try:  # no list_columns (older test mocks): read the names off a row
+        for row in table.search():
+            return set(dict(row).keys())
+    except Exception:
+        pass
+    return set()
 
 
 def _session_tag():
@@ -263,12 +336,22 @@ def admin_status_report(error_limit=20):
     return build_report(error_limit)
 
 
-@anvil.server.http_endpoint("/admin/status", authenticate_users=True)
+@anvil.server.http_endpoint("/admin/status")
 def admin_status_endpoint(errors="20", **kw):
-    """Signed-in admin (same browser) or HTTP Basic auth with an admin's email + password. Everyone else: 403."""
-    user = anvil.users.get_user()
-    if not _admin(user):
-        return anvil.server.HttpResponse(403, "Admins only.")
+    """Addanapp (signed), a signed-in admin (same browser) or HTTP Basic auth with an admin's email + password."""
+    req = anvil.server.request
+    if not signed_by_addanapp(getattr(req, "headers", {})):
+        user = anvil.users.get_user()
+        if user is None and getattr(req, "username", None):
+            try:
+                user = anvil.users.login_with_email(str(req.username), str(req.password or ""))
+            except Exception:
+                user = None
+        if user is None:
+            return anvil.server.HttpResponse(401, "Sign in as an admin first.",
+                                             {"WWW-Authenticate": 'Basic realm="App status"'})
+        if not _admin(user):
+            return anvil.server.HttpResponse(403, "Admins only.")
     try:
         limit = max(0, min(200, int(errors)))
     except (TypeError, ValueError):
