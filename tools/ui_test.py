@@ -65,7 +65,7 @@ def start(restart=False):
         sh("docker", "volume", "rm", KEY + "-app", check=False)  # fresh copy: no files left over from old versions
         sh("docker", "create", "--name", NAME, "-p", "%d:%d" % (PORT, PORT), "-v", KEY + "-app:/apps/MainApp",
            "-v", KEY + "-data:/anvil-data", IMAGE, "--app", "MainApp", "--origin", URL,
-           "--auto-migrate", "--uplink-key", UPLINK_KEY)  # new tables/columns apply to the local database (--ignore-invalid-schema would block that)
+           "--auto-migrate", "--secret", "admin_emails=admin@example.com", "--uplink-key", UPLINK_KEY)  # new tables/columns apply to the local database (--ignore-invalid-schema would block that)
         copy_app()
         sh("docker", "start", NAME)
         print("starting the App Server ...")

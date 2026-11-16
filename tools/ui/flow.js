@@ -47,14 +47,14 @@
   async function adminIn() {
     const pw = 'Hb-local-admin-Kq7-2026';
     await page('#auth', () => fields().length >= 2);
-    type(fields()[0], 'arkulinskis@gmail.com'); type(fields()[1], pw);
+    type(fields()[0], 'admin@example.com'); type(fields()[1], pw);
     $$('.anvil-role-btn-block button').find((b) => vis(b) && /Sign in/.test(b.textContent)).click();
     const end = Date.now() + 8000;
     while (Date.now() < end && location.hash !== '#home') await sleep(200);
     if (location.hash !== '#home') {  // no owner account in this local database yet: make it
       $$('.au-card .ui-seg button').find((b) => /Create account/.test(b.textContent)).click();
       await sleep(500);
-      const i = fields(); type(i[0], 'Local Admin'); type(i[1], 'arkulinskis@gmail.com'); type(i[2], pw);
+      const i = fields(); type(i[0], 'Local Admin'); type(i[1], 'admin@example.com'); type(i[2], pw);
       const tick = $('.au-card input[type=checkbox]'); if (tick && !tick.checked) tick.click();
       $$('.anvil-role-btn-block button').find((b) => vis(b) && /Create account/.test(b.textContent)).click();
     }

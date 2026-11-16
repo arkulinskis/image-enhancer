@@ -24,13 +24,13 @@
     await page('#auth', () => $$('.au-card input').length >= 2);
     const inputs = () => $$('.au-card input[type=text], .au-card input[type=email], .au-card input[type=password]').filter((i) => i.offsetParent);
     const pw = 'Hb-local-admin-Kq7-2026';
-    type(inputs()[0], 'arkulinskis@gmail.com'); type(inputs()[1], pw);
+    type(inputs()[0], 'admin@example.com'); type(inputs()[1], pw);
     $$('.anvil-role-btn-block button').find((b) => /Sign in/.test(b.textContent)).click();
     await sleep(3000);
     if (location.hash !== '#home') {  // no account yet in this local database: create it
       $$('.ui-seg button').find((b) => /Create account/.test(b.textContent)).click();
       await sleep(500);
-      const i = inputs(); type(i[0], 'Local Admin'); type(i[1], 'arkulinskis@gmail.com'); type(i[2], pw);
+      const i = inputs(); type(i[0], 'Local Admin'); type(i[1], 'admin@example.com'); type(i[2], pw);
       const tick = $('.au-card input[type=checkbox]'); if (tick && !tick.checked) tick.click();
       $$('.anvil-role-btn-block button').find((b) => /Create account/.test(b.textContent)).click();
     }
@@ -41,7 +41,7 @@
     await page('#admin/feedback', () => $('.ad-filter'));
     ok(/New \(\d+\)/.test($('.ad-filter').textContent), 'feedback: filter counts');
     await page('#admin/users', () => $$('.ad-user-row').length >= 1);
-    const row = $$('.ad-user-row').find((r) => !/arkulinskis@gmail.com/.test(r.textContent));
+    const row = $$('.ad-user-row').find((r) => !/admin@example.com/.test(r.textContent));
     const box = row.querySelectorAll('input[type=checkbox]')[1];
     const was = box.checked;
     box.click(); await sleep(2500); box.click(); await sleep(2500);

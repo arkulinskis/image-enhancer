@@ -167,7 +167,7 @@ tools/                     check.py, assets.py, build_icons.py, make_icons.py, u
   "fields"; `Api.read_submission` reads options only from `request.query_params` there.
 - **Errors from the worker** must not be named like the "away" errors (a worker `TimeoutError` would look like "PC away"):
   the worker raises everything as RuntimeError with a sentence; avoid "not connected" in messages.
-- **Console pages are admin-only**; UI test scripts sign in as arkulinskis@gmail.com (`adminIn()`, password
+- **Console pages are admin-only**; UI test scripts sign in as your admin email (App Secret `admin_emails`) (`adminIn()`, password
   `Hb-local-admin-Kq7-2026` in the local test database only).
 - A non-admin opening an owner page: router shows #home and `replaceState`s the address.
 - Rows in RepeatingPanels keep `panel = self.parent` at the start of a click: a redraw during a dialog detaches the row.

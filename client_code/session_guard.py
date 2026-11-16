@@ -22,6 +22,7 @@ from anvil.js import window
 IDLE_MS = 10 * 60 * 1000  # hidden / untouched this long -> check the session when the person is back
 LOOP_MS = 30 * 1000       # an expiry this soon after our own reload is shown, not reloaded again
 DRAFT_MS = 3 * 60 * 1000  # saved field values older than this are thrown away
+REPORT_MAX = 10           # uncaught errors reported to the server's error_log per page load
 KEY = "anvil.session_guard"
 FIELDS = "input, textarea, select"
 SKIP_TYPES = ("password", "file", "hidden", "submit", "button", "reset", "image")
@@ -138,10 +139,28 @@ def _reloaded_recently():
     return bool(at) and _now() - float(at) < LOOP_MS
 
 
+def _report(err):
+    """Tell the server about an uncaught error (AppStatus.log_client_error -> error_log, shown in the admin status
+    report). Never raises; at most REPORT_MAX per page load; skipped when offline (the call would fail anyway)."""
+    if _s.get("reported", 0) >= REPORT_MAX or type(err).__name__ in ("AppOfflineError", "SessionExpiredError"):
+        return
+    _s["reported"] = _s.get("reported", 0) + 1
+    try:
+        tb = getattr(err, "traceback", None)
+        if isinstance(tb, (list, tuple)):
+            tb = "\n".join(str(x) for x in tb)
+        page = str(window.location.pathname or "") + str(window.location.hash or "")
+        anvil.server.call_s("log_client_error", type(err).__name__, str(err)[:1000],
+                            None if tb is None else str(tb)[:4000], page[:300])
+    except Exception:
+        pass
+
+
 def _on_error(err):
     if is_expired(err) and not _reloaded_recently():
         reload_page()
         return
+    _report(err)
     raise err  # anything else: Anvil's usual error handling
 
 

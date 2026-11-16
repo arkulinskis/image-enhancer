@@ -66,7 +66,7 @@ your app <--result / webhook--                                       <--picture-
 ## Setting it up
 
 **Anvil (once):** Create app → Clone from GitHub `https://github.com/arkulinskis/image-enhancer`; check the Users
-service; accept the Schema Mismatch ("The schema of the source code is correct"); sign up with arkulinskis@gmail.com
+service; accept the Schema Mismatch ("The schema of the source code is correct"); sign up with your admin email (App Secret `admin_emails`)
 first (that account is the owner), then switch off sign-up in the Users service; add **Uplink → Enable the Server
 Uplink** and copy the key; check **Scheduled Tasks** lists `enhancer_tick` every 15 minutes (paid plans; without it the
 dispatcher still waits and retries by itself); Publish.

@@ -1,5 +1,36 @@
 allow_embedding: false
 db_schema:
+  error_log:
+    client: none
+    columns:
+    - admin_ui: {order: 0, width: 200}
+      name: when
+      type: datetime
+    - admin_ui: {order: 1, width: 120}
+      name: source
+      type: string
+    - admin_ui: {order: 2, width: 160}
+      name: kind
+      type: string
+    - admin_ui: {order: 3, width: 300}
+      name: message
+      type: string
+    - admin_ui: {order: 4, width: 300}
+      name: traceback
+      type: string
+    - admin_ui: {order: 5, width: 200}
+      name: page
+      type: string
+    - admin_ui: {order: 6, width: 120}
+      name: session
+      type: string
+    - admin_ui: {order: 7, width: 200}
+      name: user
+      target: users
+      type: link_single
+    indexes: []
+    server: full
+    title: Error log
   app_settings:
     client: none
     columns:
@@ -374,5 +405,8 @@ services:
 - client_config: {}
   server_config: {}
   source: /runtime/services/google.yml
+- client_config: {}
+  server_config: {}
+  source: /runtime/services/anvil/secrets.yml
 startup: {module: startup, type: module}
 uplink_visible: true
