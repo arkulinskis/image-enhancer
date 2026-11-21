@@ -1,0 +1,28 @@
+<anvil-form layout="Image_Enhancer.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="ui-wrap page-sheet">
+      <div class="ui-page-head">
+        <div>
+          <a href="#try" class="small ie-back"><i class="ic ic-back"></i> Test bench</a>
+          <anvil-component type="Label" name="title" prop:text="Contact sheet" prop:role='["page-title"]'></anvil-component>
+          <anvil-component type="Label" name="sub" prop:role='["ie-sub"]'></anvil-component>
+        </div>
+        <anvil-component type="Button" name="again_button" prop:text="Whole sheet again, new seed" prop:role='["btn", "ic-dice"]' prop:visible="false"></anvil-component>
+      </div>
+
+      <div class="ui-empty" anvil:name="missing">
+        <i class="ic ic-grid"></i>
+        <h2>That contact sheet isn't here</h2>
+        <anvil-component type="Label" name="missing_text"></anvil-component>
+        <p><a href="#try">Make a new one on the Test bench</a></p>
+      </div>
+
+      <div anvil:name="body">
+        <anvil-component type="Label" name="progress" prop:role='["msg-note"]'></anvil-component>
+        <anvil-component type="RepeatingPanel" name="frames_panel" prop:item_template="Image_Enhancer.Items.SheetFrame" prop:role='["ie-sheet"]'></anvil-component>
+        <p class="muted small ie-mt">Every frame used the same seed and options, so only the style changes. Open a frame for the before/after slider, the exact instruction and the download.</p>
+      </div>
+      <anvil-component type="Timer" name="timer" prop:interval="0"></anvil-component>
+    </div>
+  </anvil-block>
+</anvil-form>

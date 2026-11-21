@@ -21,10 +21,23 @@
           <anvil-component type="Image_Enhancer.Components.BeforeAfter" name="compare"></anvil-component>
           <anvil-component type="Label" name="state_note" prop:role='["msg-note"]' prop:visible="false"></anvil-component>
           <anvil-component type="Label" name="error_note" prop:role='["msg-error"]' prop:visible="false"></anvil-component>
+          <div class="ie-doctor" anvil:name="doctor_box">
+            <i class="ic ic-bulb"></i>
+            <div>
+              <anvil-component type="Label" name="doctor_title" prop:role='["ie-doctor-title"]'></anvil-component>
+              <anvil-component type="Label" name="doctor_steps" prop:role='["ie-fix-steps"]'></anvil-component>
+            </div>
+          </div>
+          <div class="ie-stuck" anvil:name="stuck_box">
+            <anvil-component type="Label" name="stuck_text" prop:role='["ie-stuck-text"]'></anvil-component>
+            <anvil-component type="Button" name="unstick_button" prop:text="Put it back in the queue" prop:role='["btn", "btn-sm", "ic-refresh"]'></anvil-component>
+          </div>
+          <a class="ie-sheet-link" anvil:name="sheet_link" href="#home"><i class="ic ic-grid"></i>Part of a contact sheet: see every style side by side</a>
           <div class="ie-actions">
             <a class="ui-btn primary" anvil:name="download_link" href="#" download target="_blank" rel="noopener"><i class="ic ic-download"></i>Download the result</a>
             <anvil-component type="Button" name="next_button" prop:text="Do next" prop:role='["btn", "ic-skip"]'></anvil-component>
             <anvil-component type="Button" name="retry_button" prop:text="Try again" prop:role='["btn", "ic-refresh"]'></anvil-component>
+            <anvil-component type="Button" name="again_button" prop:text="Make again with a new seed" prop:role='["btn", "ic-dice"]'></anvil-component>
             <anvil-component type="Button" name="cancel_button" prop:text="Cancel" prop:role='["btn", "ic-x"]'></anvil-component>
             <anvil-component type="Button" name="delete_button" prop:text="Delete" prop:role='["btn", "btn-danger", "ic-trash"]'></anvil-component>
           </div>

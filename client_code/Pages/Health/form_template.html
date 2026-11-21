@@ -1,0 +1,61 @@
+<anvil-form layout="Image_Enhancer.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="ui-wrap page-health">
+      <div class="ui-page-head">
+        <div>
+          <a href="#home" class="small ie-back"><i class="ic ic-back"></i> Queue</a>
+          <anvil-component type="Label" name="title" prop:text="PC health" prop:role='["page-title"]'></anvil-component>
+          <anvil-component type="Label" name="sub" prop:role='["ie-sub"]'></anvil-component>
+        </div>
+        <anvil-component type="Button" name="refresh_button" prop:text="Refresh" prop:role='["btn", "btn-ghost", "ic-refresh"]'></anvil-component>
+      </div>
+
+      <div class="ie-strip">
+        <span><anvil-component type="Label" name="n_up24" prop:text="-" prop:role='["ie-n"]'></anvil-component>there in the last 24 h</span>
+        <span><anvil-component type="Label" name="n_up7" prop:text="-" prop:role='["ie-n"]'></anvil-component>there this week</span>
+        <span><anvil-component type="Label" name="n_gap" prop:text="-" prop:role='["ie-n"]'></anvil-component>longest away</span>
+        <span><anvil-component type="Label" name="n_done24" prop:text="0" prop:role='["ie-n"]'></anvil-component>pictures in 24 h</span>
+        <span><anvil-component type="Label" name="n_fail" prop:text="-" prop:role='["ie-n"]'></anvil-component>failed (7 days)</span>
+        <span><anvil-component type="Label" name="n_avg" prop:text="-" prop:role='["ie-n"]'></anvil-component>per picture</span>
+      </div>
+
+      <section class="ie-sec" aria-label="When the PC was there">
+        <div class="ie-sec-head">
+          <h2>When the PC was there</h2>
+          <anvil-component type="Label" name="since" prop:role='["fine-print"]'></anvil-component>
+        </div>
+        <p>Every square is an hour of your day. The fuller the colour, the more of that hour the worker was connected; a red corner means a picture failed then.</p>
+        <div class="ie-heat-wrap">
+          <div class="ie-heat ui-card" anvil:name="heat" role="img" aria-label="When the PC was connected"></div>
+        </div>
+        <div class="ie-heat-legend" aria-hidden="true">
+          <span><b class="l0"></b>away</span><span><b class="l2"></b>part of the hour</span><span><b class="l4"></b>the whole hour</span><span><b class="lu"></b>no record yet</span>
+        </div>
+        <anvil-component type="Label" name="no_heat" prop:role='["msg-note"]' prop:visible="false" prop:text="Nothing recorded yet. Start the worker on your PC: every 10 minutes it is connected fills in a little more of that hour's square."></anvil-component>
+      </section>
+
+      <div class="ie-health-two">
+        <section class="ie-sec" aria-label="Day by day">
+          <div class="ie-sec-head"><h2>Day by day</h2></div>
+          <anvil-component type="RepeatingPanel" name="days_panel" prop:item_template="Image_Enhancer.Items.StatRow" prop:role='["ie-stats"]'></anvil-component>
+        </section>
+        <section class="ie-sec" aria-label="By style">
+          <div class="ie-sec-head"><h2>By style</h2></div>
+          <anvil-component type="RepeatingPanel" name="styles_panel" prop:item_template="Image_Enhancer.Items.StatRow" prop:role='["ie-stats"]'></anvil-component>
+          <anvil-component type="Label" name="no_styles" prop:role='["fine-print"]' prop:visible="false" prop:text="No pictures finished in the last 7 days."></anvil-component>
+        </section>
+      </div>
+
+      <section class="ie-sec" aria-label="What went wrong">
+        <div class="ie-sec-head"><h2>What went wrong (7 days)</h2></div>
+        <anvil-component type="RepeatingPanel" name="problems_panel" prop:item_template="Image_Enhancer.Items.ProblemRow" prop:role='["ie-problems"]'></anvil-component>
+        <div class="ui-empty" anvil:name="no_problems">
+          <i class="ic ic-check"></i>
+          <h3>Nothing failed</h3>
+          <p>No picture failed in the last 7 days. If one does, its likely cause and the fix show up here.</p>
+        </div>
+      </section>
+      <anvil-component type="Timer" name="timer" prop:interval="0"></anvil-component>
+    </div>
+  </anvil-block>
+</anvil-form>

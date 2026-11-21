@@ -23,7 +23,7 @@ import anvil.tables as tables
 import anvil.tables.query as q
 
 from . import common as C
-from . import Pictures, Styles
+from . import Diagnose, Pictures, Styles
 
 STATUSES = ("queued", "working", "done", "failed", "cancelled")
 OPEN = ("queued", "working")
@@ -33,6 +33,7 @@ FORMATS = ("png", "jpeg", "webp")
 SIZES = ("model", "source")
 MAX_WAITING_PER_CLIENT = 500
 MAX_QUEUE = 2000
+STUCK_MINUTES = 20           # a job on the PC longer than this (or 4x the average) "looks stuck": worker timeout 15 min + start-up
 DEFAULT_CONFIG = {"retry_minutes": 15, "max_attempts": 3, "keep_days": 30, "paused": False}
 
 
@@ -190,8 +191,21 @@ def console_dict(j, snap=None):
     d.update({"row_id": j.get_id(), "app": j["client"]["name"] if j["client"] is not None else (
                   "Console" if j["origin"] == "console" else "Deleted app"),
               "origin": j["origin"] or "api", "priority": int(j["priority"] or 0), "demo": bool(j["is_demo"]),
-              "worker": j["worker_info"] or {}, "instruction": (j["options"] or {}).get("instruction", "")})
+              "worker": j["worker_info"] or {}, "instruction": (j["options"] or {}).get("instruction", ""),
+              "sheet": (j["options"] or {}).get("sheet"),
+              "diagnosis": Diagnose.explain(j["error"]) if j["status"] in ("failed", "queued") else None,
+              "stuck": False, "working_seconds": None})
+    if j["status"] == "working" and j["started"]:
+        snap = snap or snapshot()
+        took = (C.now() - j["started"]).total_seconds()
+        d["working_seconds"] = int(took)
+        d["stuck"] = took > stuck_after(snap["avg_seconds"])
     return d
+
+
+def stuck_after(avg_seconds):
+    """Seconds after which a job on the PC 'looks stuck'."""
+    return max(STUCK_MINUTES * 60, 4 * float(avg_seconds or DEFAULT_SECONDS))
 
 
 def find(job_id, client=None):

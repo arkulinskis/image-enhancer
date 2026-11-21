@@ -766,3 +766,70 @@ anvil-dropzone { display: contents; }
   .ie-job { grid-template-columns: 26px 84px minmax(0, 1fr); }
   .ie-job .ie-job-side { flex-direction: row; align-items: center; justify-content: space-between; }
 }
+
+/* problem doctor, stuck jobs (Queue + Job pages, 2026-11-20) */
+.ie-stuck { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px;
+  padding: 10px 14px; border-radius: var(--radius-sm); background: var(--c-warn-soft); border-left: 3px solid var(--c-warn); }
+.page-job .ie-stuck { margin-top: 12px; }
+.anvil-role-ie-stuck-text { color: var(--c-ink); font-size: .92rem; flex: 1 1 260px; min-width: 0; }
+.ie-attention { margin-top: 28px; }
+.ie-attention > p { color: var(--c-muted); font-size: .92rem; margin: -4px 0 12px; }
+.anvil-role-ie-problems > div { display: grid; gap: 10px; }
+.ie-problem { padding: 14px 16px; border: 1px solid var(--c-line); border-left: 3px solid var(--c-bad); border-radius: var(--radius-sm); background: var(--c-surface); }
+.ie-problem-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.ie-problem-head a { color: var(--c-ink); text-decoration: none; font-weight: 700; }
+.ie-problem-head a:hover { color: var(--c-brand); }
+.anvil-role-ie-fix-steps { white-space: pre-line; color: var(--c-ink); font-size: .92rem; line-height: 1.55; margin-top: 6px; overflow-wrap: anywhere; }
+.ie-problem .anvil-role-ie-meta { margin-top: 6px; }
+.ie-problem-btns { display: flex; gap: 8px; margin-top: 10px; }
+.ie-doctor { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 12px; margin-top: 12px; padding: 12px 14px;
+  border-radius: var(--radius-sm); background: var(--c-surface-2); }
+.ie-doctor > .ic { color: var(--c-accent); margin-top: 2px; }
+.anvil-role-ie-doctor-title { font-weight: 700; color: var(--c-ink); }
+.ie-sheet-link { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; font-size: .92rem; min-height: 32px; }
+
+/* PC health page */
+.ie-back { display: inline-flex; align-items: center; gap: 4px; margin-bottom: 6px; text-decoration: none; min-height: 32px; padding: 4px 0; }
+.ie-heat-wrap { overflow-x: auto; }
+.ie-heat { padding: 14px 16px; display: grid; gap: 4px; min-width: 340px; }
+.ie-heat-row { display: grid; grid-template-columns: 74px repeat(24, minmax(0, 1fr)); gap: 3px; align-items: center; }
+.ie-heat-row > span { font: 500 .78rem/1 var(--font-mono); color: var(--c-muted); white-space: nowrap; }
+.ie-heat-hours i { font: 500 .7rem/1 var(--font-mono); color: var(--c-muted); font-style: normal; }
+.ie-heat b, .ie-heat-legend b { display: block; aspect-ratio: 1; min-height: 8px; border-radius: 2px; background: var(--c-surface-2); position: relative; }
+.ie-heat b.l0, .ie-heat-legend b.l0 { background: color-mix(in srgb, var(--c-bad) 22%, var(--c-surface-2)); }
+.ie-heat b.l1 { background: color-mix(in srgb, var(--c-good) 30%, var(--c-surface-2)); }
+.ie-heat b.l2, .ie-heat-legend b.l2 { background: color-mix(in srgb, var(--c-good) 55%, var(--c-surface-2)); }
+.ie-heat b.l3 { background: color-mix(in srgb, var(--c-good) 78%, var(--c-surface-2)); }
+.ie-heat b.l4, .ie-heat-legend b.l4 { background: var(--c-good); }
+.ie-heat b.lu, .ie-heat-legend b.lu { background: transparent; border: 1px dashed var(--c-line); }
+.ie-heat b.lf { background: transparent; }
+.ie-heat b.x::after { content: ""; position: absolute; top: 0; right: 0; border-style: solid; border-width: 0 6px 6px 0;
+  border-color: transparent var(--c-bad) transparent transparent; }
+.ie-heat-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 10px; color: var(--c-muted); font-size: .86rem; }
+.ie-heat-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.ie-heat-legend b { width: 12px; min-height: 12px; }
+.ie-health-two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px; }
+@media (max-width: 900px) { .ie-health-two { grid-template-columns: minmax(0, 1fr); } }
+.anvil-role-ie-stats > div { display: grid; border-top: 1px solid var(--c-line); }
+.ie-stat-row { display: grid; grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr)); gap: 10px; padding: 9px 2px; border-bottom: 1px solid var(--c-line); font-size: .92rem; align-items: baseline; }
+.ie-stat-row .anvil-role-mono { text-align: right; font-variant-numeric: tabular-nums; }
+.anvil-role-ie-stat-head { color: var(--c-muted); font-size: .8rem; font-weight: 600; }
+.ie-stat-row > :not(:first-child).anvil-role-ie-stat-head { text-align: right; }
+@media (max-width: 480px) { .ie-heat { padding: 10px; } .ie-heat-row { grid-template-columns: 52px repeat(24, minmax(0, 1fr)); gap: 2px; } .ie-heat-row > span { font-size: .68rem; } }
+
+/* contact sheet (Test bench mode + #sheet page) */
+.ie-mode { margin-bottom: 12px; }
+.anvil-role-ie-sheet > div { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 18px; margin-top: 16px; }
+.ie-sframe { display: block; color: var(--c-ink); text-decoration: none; }
+.ie-sframe-pic { position: relative; display: grid; place-items: center; aspect-ratio: 4 / 3; background: var(--c-tray); border-radius: var(--radius-sm); overflow: hidden;
+  transition: box-shadow var(--dur-fast) var(--ease-out), transform var(--dur-press) var(--ease-out); }
+.ie-sframe:hover .ie-sframe-pic { box-shadow: 0 0 0 2px var(--c-brand); }
+.ie-sframe:active .ie-sframe-pic { transform: scale(.98); }
+.ie-sframe-pic img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.ie-sframe-pic.empty { background: repeating-linear-gradient(135deg, var(--c-tray) 0 12px, color-mix(in srgb, var(--c-tray) 82%, var(--c-brand)) 12px 24px); }
+.ie-sframe-pic.failed { outline: 2px solid var(--c-bad); outline-offset: -2px; }
+.anvil-role-ie-sframe-wait { font: 500 .86rem/1.2 var(--font-mono); color: var(--c-ink); background: var(--c-surface); padding: 6px 10px; border-radius: 4px; }
+.ie-sframe-cap { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2px 10px; margin-top: 8px; align-items: baseline; }
+.anvil-role-ie-sframe-num { font: 500 .8rem/1 var(--font-mono); color: var(--c-muted); }
+.ie-sframe-cap .anvil-role-ie-meta { grid-column: 2; }
+@media (max-width: 520px) { .anvil-role-ie-sheet > div { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; } }

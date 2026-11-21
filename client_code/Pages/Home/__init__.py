@@ -21,6 +21,8 @@ class Home(HomeTemplate):
         state.live(self.pc_state)
         for panel in (self.waiting_panel, self.recent_panel):
             panel.add_event_handler("x-changed", self._changed)
+        self.problems_panel.add_event_handler("x-retry", self._retry_cause)
+        self._problems_key = None
         self._draw(state.call("console_overview"))
         self.timer.interval = 8
 
@@ -64,7 +66,55 @@ class Home(HomeTemplate):
         if not self._history:
             self._set_recent(d["recent"])
         self.events_panel.items = d["events"]
+        self._draw_stuck([j for j in d["waiting"] if j.get("stuck")])
+        self._draw_problems(d.get("problems") or [])
         self.no_events.visible = not d["events"]
+
+    def _draw_stuck(self, stuck):
+        self.stuck_box.visible = bool(stuck)
+        if stuck:
+            j = stuck[0]
+            self.stuck_text.text = ("%s has been on the PC for %s, much longer than usual. It looks stuck "
+                                    "(ComfyUI may have hung, or the worker lost its connection)." % (
+                                        j["id"], fmt.secs(j.get("working_seconds") or 0)))
+
+    def _draw_problems(self, groups):
+        """Redraw the 'Needs attention' card only when it changed (the page refreshes every 8 s)."""
+        key = repr([(g["key"], g["failed"], g["retrying"], g["job_id"]) for g in groups])
+        self.problems_box.visible = bool(groups)
+        if key == self._problems_key:
+            return
+        self._problems_key = key
+        self.problems_panel.items = groups
+        retryable = sum(g["retryable"] for g in groups)
+        self.retry_all_button.visible = len([g for g in groups if g["retryable"]]) > 1
+        self.retry_all_button.text = "Try all %d again" % retryable
+
+    def _retry(self, cause):
+        r = state.call("console_retry_failed", cause)
+        if r:
+            state.toast("%s back in the queue." % state.plural(r["count"], "picture") if r["count"] else
+                        "Nothing to try again (demo jobs are only examples).", "ok")
+            self._reload()
+
+    def _retry_cause(self, key, **event_args):
+        self._retry(key)
+
+    @handle("retry_all_button", "click")
+    def retry_all_button_click(self, **event_args):
+        self._retry("")
+
+    @handle("unstick_button", "click")
+    def unstick_button_click(self, **event_args):
+        if not confirm("The job goes back to the front of the queue (this counts as one try) and a fresh dispatcher "
+                       "starts. If the PC is in fact still painting, the next picture waits for it there.",
+                       title="Put it back in the queue?", buttons=[("Leave it", False), ("Put it back", True)],
+                       role="app-dialog"):
+            return
+        r = state.call("console_unstick")
+        if r:
+            state.toast("Back in the queue. The PC is asked again now.", "ok")
+            self._reload()
 
     def _set_recent(self, rows):
         rows = [dict(j, _mode="recent") for j in rows]

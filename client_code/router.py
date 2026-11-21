@@ -21,6 +21,8 @@ PAGES = {
     "styles": ("admin", "Styles"),
     "setup": ("admin", "Connect"),
     "job": ("admin", "Job"),
+    "health": ("admin", "PC health"),
+    "sheet": ("admin", "Contact sheet"),
     "profile": ("user", "Your profile"),
     "admin": ("admin", "Admin"),
 }
@@ -58,6 +60,12 @@ def _form(name):
     if name == "job":
         from .Pages.Job import Job
         return Job
+    if name == "health":
+        from .Pages.Health import Health
+        return Health
+    if name == "sheet":
+        from .Pages.Sheet import Sheet
+        return Sheet
     if name == "profile":
         from .Pages.Profile import Profile
         return Profile

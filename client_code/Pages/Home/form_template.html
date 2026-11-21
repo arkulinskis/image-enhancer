@@ -28,7 +28,12 @@
           </div>
           <div class="ie-pc-actions">
             <anvil-component type="Button" name="ping_button" prop:text="Check the PC" prop:role='["btn", "btn-ghost", "ic-cpu"]'></anvil-component>
+            <a class="ui-btn ghost" href="#health"><i class="ic ic-clock"></i>PC health</a>
             <a class="ui-btn ghost" href="#setup" anvil:name="connect_link"><i class="ic ic-plug"></i>Connect a PC</a>
+          </div>
+          <div class="ie-stuck" anvil:name="stuck_box">
+            <anvil-component type="Label" name="stuck_text" prop:role='["ie-stuck-text"]'></anvil-component>
+            <anvil-component type="Button" name="unstick_button" prop:text="Put it back in the queue" prop:role='["btn", "btn-sm", "ic-refresh"]'></anvil-component>
           </div>
         </section>
         <div class="ie-strip">
@@ -38,6 +43,15 @@
           <span><anvil-component type="Label" name="n_failed" prop:text="0" prop:role='["ie-n"]'></anvil-component>failed</span>
           <span><anvil-component type="Label" name="n_avg" prop:text="-" prop:role='["ie-n"]'></anvil-component>per picture</span>
         </div>
+
+        <section class="ie-sec ie-attention" anvil:name="problems_box" aria-label="Needs attention">
+          <div class="ie-sec-head">
+            <h2>Needs attention</h2>
+            <anvil-component type="Button" name="retry_all_button" prop:text="Try them all again" prop:role='["btn", "btn-sm", "btn-primary", "ic-refresh"]' prop:visible="false"></anvil-component>
+          </div>
+          <p>Pictures that failed in the last 7 days, or are waiting for another try, grouped by the likely cause, with what to do about it.</p>
+          <anvil-component type="RepeatingPanel" name="problems_panel" prop:item_template="Image_Enhancer.Items.ProblemRow" prop:role='["ie-problems"]'></anvil-component>
+        </section>
 
         <div class="ie-two">
           <div>

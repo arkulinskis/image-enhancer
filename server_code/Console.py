@@ -1,4 +1,8 @@
 """What the owner's console pages call. Every function is for admins only (the console is private)."""
+import datetime as dt
+import random
+import secrets
+
 import anvil
 import anvil.server
 from anvil.tables import app_tables
@@ -6,7 +10,7 @@ import anvil.tables as tables
 import anvil.tables.query as q
 
 from . import common as C
-from . import DemoData, Queue, Styles, Worker
+from . import DemoData, Diagnose, Health, Queue, Styles, Worker
 
 
 def _admin():
@@ -49,7 +53,7 @@ def console_overview():
             "more_waiting": max(0, len(working) + len(queued) - 60),
             "recent": [Queue.console_dict(j, snap) for j in recent],
             "events": [{"time": C.iso(e["time"]), "kind": e["kind"], "text": e["text"], "job_id": e["job_id"]} for e in events],
-            "config": Queue.config()}
+            "config": Queue.config(), "problems": Diagnose.problems(7)}
 
 
 @anvil.server.callable(require_user=True)
@@ -210,3 +214,145 @@ def console_setup():
     _admin()
     return {"api_base": Queue.api_origin() + "/v1", "pc": pc_status(), "config": Queue.config(),
             "styles": [Styles.public(r) for r in Styles.rows(True)]}
+
+
+# ------------------------------------------------------------------------------------------- problem doctor
+@anvil.server.callable(require_user=True)
+def console_retry_failed(cause=""):
+    """'Try them all again': failed jobs of the last 7 days (all, or those with one cause) go back in the queue."""
+    _admin()
+    cause = C.text(cause, 30)
+    if cause and cause not in Diagnose.keys():
+        return C.fail("Unknown cause.")
+    since = C.now() - dt.timedelta(days=7)
+    n = 0
+    for j in app_tables.jobs.search(status="failed", finished=q.greater_than(since)):
+        if j["is_demo"]:
+            continue
+        if cause and (Diagnose.explain(j["error"] or "-") or {}).get("key") != cause:
+            continue
+        if Queue.retry(j):
+            n += 1
+        if n >= 200:
+            break
+    if n:
+        Worker.kick("retry")
+    return C.ok(count=n)
+
+
+@anvil.server.callable(require_user=True)
+def console_unstick(job_id=None):
+    """'Put it back in the queue' for a job the PC looks stuck on."""
+    _admin()
+    r = Worker.unstick()
+    if not r["moved"]:
+        return C.fail("Nothing is on the PC right now.")
+    return C.ok(moved=r["moved"], pc=pc_status())
+
+
+@anvil.server.callable(require_user=True)
+def console_health(tz_minutes=0):
+    _admin()
+    d = Health.report(tz_minutes)
+    d["pc"] = pc_status()
+    return d
+
+
+# ------------------------------------------------------------------------------------------- contact sheets + make again
+def _new_seed():
+    return random.randint(1, 2 ** 31 - 1)
+
+
+def _sheet_jobs(sheet_id):
+    if not isinstance(sheet_id, str) or not sheet_id.startswith("sh_"):
+        return []
+    rows = [j for j in app_tables.jobs.search(tables.order_by("created", ascending=False), origin="console")
+            if (j["options"] or {}).get("sheet") == sheet_id]
+    return sorted(rows, key=lambda j: int((j["options"] or {}).get("frame") or 0))
+
+
+def _make_sheet(data, name, style_keys, prompt, fidelity, megapixels, fmt, size, seed):
+    sheet_id = "sh_" + secrets.token_hex(6)
+    seed = seed if seed not in (None, "") else _new_seed()
+    made = []
+    for i, key in enumerate(style_keys):
+        st, options, _, _ = Queue.clean_options(style=key, prompt=prompt, fidelity=fidelity, megapixels=megapixels,
+                                                seed=seed, fmt=fmt, size=size)
+        options.update(sheet=sheet_id, frame=i + 1)
+        made.append(Queue.create(None, "console", data, name, st, options))
+    Worker.kick("queued")
+    return sheet_id, made
+
+
+@anvil.server.callable(require_user=True)
+def console_submit_sheet(picture, styles, prompt="", fidelity="balanced", megapixels=1.0, fmt="png", size="model", seed=None):
+    """A contact sheet: the same picture in several styles with the same seed, so only the style changes."""
+    _admin()
+    if picture is None or not hasattr(picture, "get_bytes"):
+        return C.fail("Choose a picture first.")
+    keys = []
+    for k in (styles or []):
+        if isinstance(k, str) and k not in keys:
+            keys.append(k)
+    if len(keys) < 2:
+        return C.fail("Pick at least two styles for a contact sheet.")
+    if len(keys) > 10:
+        return C.fail("A contact sheet holds up to 10 styles.")
+    try:
+        sheet_id, _ = _make_sheet(picture.get_bytes(), getattr(picture, "name", None) or "picture", keys,
+                                  prompt, fidelity, megapixels, fmt, size, seed)
+    except Queue.Refused as r:
+        return C.fail(r.message)
+    return C.ok(sheet_id=sheet_id)
+
+
+@anvil.server.callable(require_user=True)
+def console_sheet(sheet_id):
+    _admin()
+    rows = _sheet_jobs(sheet_id)
+    if not rows:
+        return C.fail("That contact sheet isn't here any more (finished jobs are deleted after %d days)." % Queue.config()["keep_days"])
+    snap = Queue.snapshot()
+    jobs = [Queue.console_dict(j, snap) for j in rows]
+    first = jobs[0]
+    return C.ok(sheet_id=sheet_id, jobs=jobs, source_url=first["source_url"], source_name=first["source_name"],
+                seed=(rows[0]["options"] or {}).get("seed"), fidelity=first["fidelity"], megapixels=first["megapixels"],
+                prompt=first["prompt"], created=first["created"])
+
+
+@anvil.server.callable(require_user=True)
+def console_sheet_again(sheet_id):
+    """The whole sheet again with a new seed (same picture, styles and options)."""
+    _admin()
+    rows = _sheet_jobs(sheet_id)
+    if not rows:
+        return C.fail("That contact sheet isn't here any more.")
+    j = rows[0]
+    o = j["options"] or {}
+    try:
+        new_id, _ = _make_sheet(j["source"].get_bytes(), j["source_name"] or "picture", [r["style"] for r in rows],
+                                o.get("extra") or "", o.get("fidelity"), o.get("megapixels"), o.get("format"), o.get("size"), None)
+    except Queue.Refused as r:
+        return C.fail(r.message)
+    return C.ok(sheet_id=new_id)
+
+
+@anvil.server.callable(require_user=True)
+def console_again(job_id):
+    """'Make again with a new seed': a new console job with the same picture, style and options."""
+    _admin()
+    j = Queue.find(job_id)
+    if j is None:
+        return C.fail("That job doesn't exist any more.")
+    if j["is_demo"]:
+        return C.fail("Demo jobs are examples; they can't be sent to the PC.")
+    o = j["options"] or {}
+    try:
+        st, options, _, _ = Queue.clean_options(style=j["style"], prompt=o.get("extra") or "", fidelity=o.get("fidelity"),
+                                                megapixels=o.get("megapixels"), seed=_new_seed(), fmt=o.get("format"),
+                                                size=o.get("size"))
+        new = Queue.create(None, "console", j["source"].get_bytes(), j["source_name"] or "picture", st, options)
+    except Queue.Refused as r:
+        return C.fail(r.message)
+    Worker.kick("queued")
+    return C.ok(job=Queue.console_dict(new))

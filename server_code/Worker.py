@@ -28,7 +28,7 @@ import anvil.tables as tables
 import anvil.tables.query as q
 
 from . import common as C
-from . import Keys, Pictures, Queue
+from . import Health, Keys, Pictures, Queue
 
 RUN_FN = "imageenhancer_run"
 PING_FN = "imageenhancer_ping"
@@ -248,6 +248,14 @@ def _seen(info=None):
         if info and info.get(k):
             keep[k] = info[k]
     C.set_setting("pc_seen", {"last_seen": C.iso(C.now()), "info": keep})
+    _mark_up()
+
+
+def _mark_up():
+    try:
+        Health.mark_up()
+    except Exception as e:  # the uptime record must never get in the way of a job or a hello
+        print("uptime record skipped: %s" % _short(e))
 
 
 # ------------------------------------------------------------------------------------------- webhooks
@@ -270,6 +278,38 @@ def notify(j):
         status = "failed: " + _short(e)
     j["callback_status"] = C.text(status, 200)
     return status
+
+
+# ------------------------------------------------------------------------------------------- stuck jobs
+def unstick():
+    """'Put it back in the queue': stop the dispatcher (its call to the PC may hang for up to 45 minutes), send every
+    job it was on back to the queue (counted as a try), and start a fresh dispatcher. If the PC is in fact still
+    painting, the next picture simply waits for it there (the worker paints one at a time)."""
+    killed = 0
+    try:
+        for t in anvil.server.list_background_tasks():
+            try:
+                if t.get_task_name() == TASK and t.is_running():
+                    t.kill()
+                    killed += 1
+            except Exception:
+                pass
+    except Exception:
+        pass
+    C.set_setting("dispatch", {"owner": None, "lease_until": None, "state": "idle", "job_id": None, "until": None})
+    cfg = Queue.config()
+    moved = []
+    for j in app_tables.jobs.search(status="working"):
+        if int(j["attempts"] or 0) >= int(cfg["max_attempts"]):
+            j.update(status="failed", finished=C.now(), error="The PC looked stuck on it and it had no tries left.")
+            notify(j)
+        else:
+            j.update(status="queued", started=None, error="The PC looked stuck on it, so it went back in the queue.")
+        moved.append(j["job_id"])
+        Queue.event("retry", "Put %s back in the queue (it looked stuck)" % j["job_id"], j["job_id"])
+    if Queue.ordered_waiting()[1] and not cfg["paused"]:
+        kick("unstuck")
+    return {"killed": killed, "moved": moved}
 
 
 # ------------------------------------------------------------------------------------------- the scheduled tick
@@ -303,6 +343,7 @@ def enhancer_worker_hello(info=None):
     was_away = not Queue.pc_online()
     C.set_setting("pc_seen", {"last_seen": C.iso(C.now()), "info": _clean_info(info)})
     C.set_setting("pc_wake", C.iso(C.now()))
+    _mark_up()
     if Queue.pc_retry_at():
         C.set_setting("pc_retry", {})
     if was_away:

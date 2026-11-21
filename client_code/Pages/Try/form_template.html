@@ -29,6 +29,10 @@
 
         <div>
           <h2 class="ie-step-h">2. The style</h2>
+          <div class="ui-seg ie-mode" role="group" aria-label="One style or a contact sheet">
+            <anvil-component type="Button" name="mode_one" prop:text="One style" prop:role='["seg"]'></anvil-component>
+            <anvil-component type="Button" name="mode_sheet" prop:text="Contact sheet" prop:role='["seg"]'></anvil-component>
+          </div>
           <anvil-component type="RepeatingPanel" name="styles_panel" prop:item_template="Image_Enhancer.Items.StyleChip" prop:role='["ie-styles"]'></anvil-component>
           <anvil-component type="Label" name="style_note" prop:role='["fine-print"]'></anvil-component>
 

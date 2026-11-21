@@ -45,6 +45,18 @@ class Job(JobTemplate):
         self.state_note.text, self.state_note.visible = note, bool(note)
         self.error_note.text = j["error"] or ""
         self.error_note.visible = bool(j["error"])
+        doc = j.get("diagnosis")
+        self.doctor_box.visible = bool(doc)
+        if doc:
+            self.doctor_title.text = ("Likely cause: " if j["status"] == "failed" else "Why it's waiting: ") + doc["title"].lower()
+            self.doctor_steps.text = "\n".join("• " + s for s in doc["steps"])
+        self.stuck_box.visible = bool(j.get("stuck"))
+        if j.get("stuck"):
+            self.stuck_text.text = ("On the PC for %s, much longer than usual: it looks stuck." % fmt.secs(j.get("working_seconds") or 0))
+        self.sheet_link.visible = bool(j.get("sheet"))
+        if j.get("sheet"):
+            state.set_attr(self.sheet_link, "href", router.href("sheet", j["sheet"]))
+        self.again_button.visible = j["status"] in ("done", "failed") and not j["demo"]
         self.download_link.visible = bool(j["result_url"])
         if j["result_url"]:
             state.set_attr(self.download_link, "href", j["result_url"])
@@ -90,6 +102,19 @@ class Job(JobTemplate):
     @handle("retry_button", "click")
     def retry_button_click(self, **event_args):
         self._act("console_retry", "Back in the queue.")
+
+    @handle("again_button", "click")
+    def again_button_click(self, **event_args):
+        r = state.call("console_again", self.job_id)
+        if r:
+            state.toast("Sent again with a new seed. It's number %s in the queue." % (r["job"]["position"] or 1), "ok")
+            router.go("job", r["job"]["id"])
+
+    @handle("unstick_button", "click")
+    def unstick_button_click(self, **event_args):
+        if confirm("It goes back to the front of the queue (this counts as one try) and a fresh dispatcher starts.",
+                   title="Put it back in the queue?", buttons=[("Leave it", False), ("Put it back", True)], role="app-dialog"):
+            self._act("console_unstick", "Back in the queue.")
 
     @handle("cancel_button", "click")
     def cancel_button_click(self, **event_args):

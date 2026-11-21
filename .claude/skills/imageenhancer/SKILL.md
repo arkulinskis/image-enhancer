@@ -57,9 +57,9 @@ client_code/
   auth.py                  sign in / up / reset / Continue with Google / sign out
   legal.py                 Privacy & Terms (installed from APP_MAKER/legal-kit; don't edit here)
   Layouts/Shell            header + account menu + footer + phone tab bar; slot "content"; refresh(page)
-  Pages/                   Landing, Auth, Home (Queue), Job, Try, Keys, Styles, Setup (Connect), Profile, Admin
+  Pages/                   Landing, Auth, Home (Queue), Job, Try, Sheet, Health, Keys, Styles, Setup (Connect), Profile, Admin
   Components/              BeforeAfter (slider), DevelopPrint (landing hero)
-  Items/                   JobRow, EventRow, StyleChip, KeyRow, StyleRow, NavLink, FeedbackRow, UserRow
+  Items/                   JobRow, EventRow, StyleChip, KeyRow, StyleRow, NavLink, FeedbackRow, UserRow, ProblemRow, StatRow, SheetFrame
   Dialogs/                 KeyEdit, KeyMade
 server_code/               common.py (C.*), Queue, Worker, Api, Console, Keys, Styles, Pictures, Accounts, Admin, DemoData, Feedback, SchemaCheck
 theme/assets/              app.css (tokens + pages + the role layer), icons.css (generated), app-kit.js, theme.css
@@ -140,6 +140,16 @@ tools/                     check.py, assets.py, build_icons.py, make_icons.py, u
   key only). The worker registers `imageenhancer_run(job, picture)` and `imageenhancer_ping()`.
 - **ETA** `Queue.snapshot()`: average of the last 40 done jobs (per style with 3+ samples, default 90 s) + 4 s hand-over.
 - **Styles** table seeded from `Styles.DEFAULTS` by `Styles.ensure()`; the worker gets the finished instruction.
+- **Problem doctor** (2026-11-20) `Diagnose.py`: `explain(error)` matches lower-case phrases (RULES, first match wins)
+  from engines.py's EngineError sentences / PyTorch messages -> {key, title, steps}; `problems(7)` groups failed +
+  retrying jobs. `console_dict` carries `diagnosis`, `stuck`, `working_seconds`, `sheet`. New worker error sentence?
+  Add its phrase to RULES. Callables: `console_retry_failed(cause)`, `console_unstick()` (`Worker.unstick`: kills
+  `enhancer_dispatch` tasks, requeues working jobs, kicks).
+- **PC health** `Health.py`: `mark_up()` sets a bit per 10-minute slot in app_settings `pc_uptime` {UTC hour: mask},
+  called from `Worker._seen` and hello (guarded: never breaks a job); `report(tz_minutes)` -> `console_health`. The
+  heatmap is drawn by `IE.heatmap` in theme/assets/ie-kit.js (Pages/Health).
+- **Contact sheets**: console jobs with `options.sheet` (id `sh_...`) and `options.frame`; `console_submit_sheet`,
+  `console_sheet`, `console_sheet_again`, `console_again` (new seed) in Console.py; Pages/Sheet + Items/SheetFrame.
 
 ## Recipes
 

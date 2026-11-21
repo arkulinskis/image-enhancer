@@ -29,6 +29,10 @@ class Try(TryTemplate):
         self.styles = d["styles"]
         if self.style not in [s["key"] for s in self.styles] and self.styles:
             self.style = self.styles[0]["key"]
+        self.mode = state.store_get("try.mode", "one")
+        enabled = [st["key"] for st in self.styles]
+        saved = state.store_get("try.sheet", None) or []
+        self.sheet = [k for k in saved if k in enabled] or enabled[:4]
         self.styles_panel.add_event_handler("x-pick", self._pick)
         self.mp_drop.items, self.mp_drop.selected_value = MEGAPIXELS, 1.0
         self.size_drop.items, self.size_drop.selected_value = SIZES, "model"
@@ -90,15 +94,47 @@ class Try(TryTemplate):
     # ---- style + fidelity
     def _draw_styles(self):
         key = state.focus_key()
-        self.styles_panel.items = [dict(s, on=s["key"] == self.style) for s in self.styles]
-        chosen = [s for s in self.styles if s["key"] == self.style]
-        self.style_note.text = chosen[0]["description"] if chosen else ""
+        sheet = self.mode == "sheet"
+        for name, btn in (("one", self.mode_one), ("sheet", self.mode_sheet)):
+            btn.role = ["seg", "on"] if name == self.mode else ["seg"]
+            state.set_control_attr(btn, "aria-pressed", "true" if name == self.mode else "false")
+        if sheet:
+            self.styles_panel.items = [dict(s, on=s["key"] in self.sheet) for s in self.styles]
+            self.style_note.text = ("%d picked. Each style becomes one frame, all with the same seed, so you can see "
+                                    "which suits the picture best (2 to 10 styles)." % len(self.sheet))
+            self.send_button.text = "Send a contact sheet (%d)" % len(self.sheet)
+        else:
+            self.styles_panel.items = [dict(s, on=s["key"] == self.style) for s in self.styles]
+            chosen = [s for s in self.styles if s["key"] == self.style]
+            self.style_note.text = chosen[0]["description"] if chosen else ""
+            self.send_button.text = "Send to the queue"
         state.refocus(self.styles_panel, key)
 
     def _pick(self, key, **event_args):
-        self.style = key
-        state.store_set("try.style", key)
+        if self.mode == "sheet":
+            if key in self.sheet:
+                self.sheet = [k for k in self.sheet if k != key]
+            elif len(self.sheet) < 10:
+                self.sheet = self.sheet + [key]
+            state.store_set("try.sheet", self.sheet)
+        else:
+            self.style = key
+            state.store_set("try.style", key)
         self._draw_styles()
+
+    def _set_mode(self, mode):
+        self.mode = mode
+        state.store_set("try.mode", mode)
+        self.message.visible = False
+        self._draw_styles()
+
+    @handle("mode_one", "click")
+    def mode_one_click(self, **event_args):
+        self._set_mode("one")
+
+    @handle("mode_sheet", "click")
+    def mode_sheet_click(self, **event_args):
+        self._set_mode("sheet")
 
     def _draw_fidelity(self):
         for name, btn in (("loose", self.fid_loose), ("balanced", self.fid_balanced), ("strict", self.fid_strict)):
@@ -133,6 +169,9 @@ class Try(TryTemplate):
             return
         seed = (self.seed_box.text or "").strip() if isinstance(self.seed_box.text, str) else self.seed_box.text
         self.message.visible = False
+        if self.mode == "sheet":
+            self._send_sheet(seed)
+            return
         self.send_button.enabled = False
         try:
             r = anvil.server.call("console_submit", self.picture, self.style, self.prompt_box.text or "", self.fidelity,
@@ -147,6 +186,24 @@ class Try(TryTemplate):
         state.toast("Sent. It's number %s in the queue." % (r["job"]["position"] or 1), "ok")
         self._show_job(r["job"])
         self.timer.interval = 3
+
+    def _send_sheet(self, seed):
+        if len(self.sheet) < 2:
+            self._error("Pick at least two styles for a contact sheet.")
+            return
+        order = [st["key"] for st in self.styles if st["key"] in self.sheet]
+        self.send_button.enabled = False
+        try:
+            r = anvil.server.call("console_submit_sheet", self.picture, order, self.prompt_box.text or "", self.fidelity,
+                                  self.mp_drop.selected_value, self.fmt_drop.selected_value, self.size_drop.selected_value,
+                                  seed if seed not in ("", None) else None)
+        finally:
+            self.send_button.enabled = True
+        if not r.get("ok"):
+            self._error(r.get("error") or "That didn't work.")
+            return
+        state.toast("Sent %d styles. They develop one after another." % len(order), "ok")
+        router.go("sheet", r["sheet_id"])
 
     def _show_job(self, j):
         self.result_box.visible = True
